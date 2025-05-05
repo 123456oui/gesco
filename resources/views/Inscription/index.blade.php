@@ -20,23 +20,29 @@
                     <th>{{__('numero Naissance')}} </th>
                     <th>{{__('Photo Eleve')}} </th>
                 
-                    @php echo $controler->crudheader($rub,$srub); @endphp
+                    @php echo $controler->crudheaderm($rub,$srub); @endphp
                 </tr>
             </thead>
             <tbody>
-                @foreach($eleves as $item)
-                    <tr style="height: 150px !important">
-                        <td>{{$item->Matricule}}</td>
-                        <td>{{$item->Nom}}</td>
-                        <td>{{$item->Prenom}}</td>
-                        <td>{{$item->Nomp}}</td>
-                        <td>{{$item->Nomm}}</td>
-                        <td>{{$item->datenais}}</td>
-                        <td>{{$item->numbactnaiss}}</td>
-                        <td> <img src="{{ $item->Photo }}" alt="Photo de {{ $item->Photo }}" style="height: 100% !important ;width: 100% !important ;">
-                        </td>
-                        @php $route = 'route'; echo $controler->crudbody($rub,$srub,$route,'Eleve.edit','Eleve.destroy',$item->Matricule); @endphp
-                    </tr>
+            @foreach($eleves as $item)
+                <tr style="height: 250px;">
+                    <td>{{$item->Matricule}}</td>
+                    <td>{{$item->Nom}}</td>
+                    <td>{{$item->Prenom}}</td>
+                    <td>{{$item->Nomp}}</td>
+                    <td>{{$item->Nomm}}</td>
+                    <td>{{$item->datenais}}</td>
+                    <td>{{$item->numbactnaiss}}</td>
+                    <td>
+                        <img src="{{ $item->Photo }}" 
+                            alt="Photo de {{ $item->Nom }}" 
+                            style="height: 250px; width: 250px; object-fit: cover; border-radius: 50%; display: block; margin: auto;">
+                    </td>
+                    @php
+                        $route = 'route';
+                        echo $controler->crudbodym($rub,$srub,$route,'Eleve.edit',$item->Matricule);
+                    @endphp
+                </tr>
                 @endforeach
             </tbody>
         </table>

@@ -101,7 +101,7 @@ class ClasseController extends Controller
     public function getClasse($id)
 {
     $classe = Classe::find($id);
-    $annee=session('annee');
+    $annee=session('annee'); 
     $niveau_id=$classe->id;
     $max=$classe->max;
     $totalInscriptions = DB::table('inscriptions')

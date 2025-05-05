@@ -47,6 +47,7 @@ function populateniveau(datas,element ) {
 
 function showSelection(selectElement) 
 {
+    $('#classe').val('');
     reinitialiser();
     const cycleId = selectElement.value; // Récupérer la valeur sélectionnée
     // Construire l'URL de l'API avec les paramètres
@@ -146,4 +147,5 @@ function reinitialiser(){
     $('#matriculeE').val('');
 
 }
+
 reinitialiser();

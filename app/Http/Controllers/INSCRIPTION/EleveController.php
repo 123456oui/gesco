@@ -137,18 +137,122 @@ class EleveController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id,$rub, $srub)
     {
-        //
+        $pcharges=Pcharge::all();
+        $classes=Classe::all();
+        $cycles= Cycle::all();
+        $niveaux= Niveau::all();
+        $eleve = Eleve::where('Matricule', $id)->first();
+        $eleve->Photo = !empty($eleve->Photo) ? asset('storage/' . $eleve->Photo) : '';
+        $annee=session('annee');
+        $totalInscriptions = DB::table('inscriptions')
+        ->where('idanneescolaire', $annee)
+        ->where('Matricule', $id)->first();
+        $montantScolarite = null;
+        $montantsub = null;
+        if ($totalInscriptions) {
+            $niveau = DB::table('niveaux')
+                ->where('annee', $annee)
+                ->where('id', $totalInscriptions->idniveau)
+                ->first();
+            $subvention=DB::table('pcharges')
+                ->where('id', $totalInscriptions->idpcharge)
+                ->first();
+            $montantsub=$subvention ? $subvention->pmontant : null;
+            $montantScolarite = $niveau ? $niveau->Montantscolarite : null;
+        }
+
+        return view('Inscription.edit')->with([ 'montantsub' => $montantsub,'montantScolarite' => $montantScolarite,'cycles' => $cycles,'classes' => $classes,'pcharges' => $pcharges,
+        'niveaux' => $niveaux,'eleve'=>$eleve,'totalInscriptions'=>$totalInscriptions,'controler'=>$this,"rub"=>$rub,"srub"=>$srub]); 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id )
     {
         //
-    }
+        $annee = session('annee');
+        $eleve = Eleve::where('Matricule', $id)->first();
+        $nom = $request->input('nom');
+        $prenom = $request->input('prenom');
+        $matricule = $request->input('matricule');
+        $numbActNaiss = $request->input('numbactnaiss');
+        $dateNaiss = $request->input('datenais');
+        $lieuNaiss = $request->input('lieunais');
+        $sante = $request->input('sante');
+        $nomMere = $request->input('nom_mere');
+        $telMere = $request->input('NumtelM');
+        $nomPere = $request->input('nom_pere');
+        $telPere = $request->input('NumtelP');
+        $etabOrigine = $request->input('etablissement_origine');
+
+        $cycleId = $request->input('cycle');
+        $niveauId = $request->input('niveau');
+        $classeId = $request->input('classe');
+
+        $subventionId = $request->input('subvention_id');
+        $montant = $request->input('montant');
+        $subventionMontant = $request->input('subvention_montant');
+        $netPayer = $request->input('net_payer');
+
+        $photo = $request->input('photo'); // ou gérer un upload de fichier
+        $photoActuelle = $request->input('photo_actuelle');
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('eleves', 'public');
+            $eleve->Photo = $path;
+        }
+        $classe=$request->input('niveau');
+        $niveau = Niveau::where('id', $classe)
+                ->where('annee', $annee)
+                ->first();
+        $userid= session('user')->id;
+        $scobrute=$niveau->Montantscolarite;
+        if ($request->filled('subvention_montant')) {
+            $subString = $request->input('subvention_montant');
+            $sub = preg_replace('/[^0-9,.]/', '', $subString);
+            $sub = str_replace(',', '.', $sub);
+            $sub = floatval($sub);
+            $sco=$scobrute-$sub;
+            DB::table('inscriptions')
+                ->where('idanneescolaire', $annee)
+                ->where('Matricule', $id)
+                ->update([
+            'idcycle' => $request->input('cycle'),
+            'idniveau' => $request->input('niveau'),
+            'idclasse' => $request->input('classe'),
+            'montantscolariteE'=> $sco,
+            'idpcharge' => $subventionId,
+            'iduser' => $userid,
+            'updated_at' => now()
+        ]);
+        }
+        else{
+            DB::table('inscriptions')
+                ->where('idanneescolaire', $annee)
+                ->where('Matricule', $id)
+                ->update([
+            'idcycle' => $request->input('cycle'),
+            'idniveau' => $request->input('niveau'),
+            'idclasse' => $request->input('classe'),
+            'iduser' => $userid,
+            'updated_at' => now()
+        ]);
+        }
+        $eleve->Nom= $nom;
+        $eleve->Prenom =$prenom;
+        $eleve->Nomp =$nomPere;
+        $eleve->Nomm =$nomMere;
+        $eleve->NumtelM =$telMere;
+        $eleve->NumtelP =$telPere ;
+        $eleve->datenais  = $dateNaiss;
+        $eleve->lieunais  =$lieuNaiss;
+        $eleve->Sante  =$sante ;
+        $eleve->numbactnaiss  =$numbActNaiss;
+        $eleve->save();
+        return redirect('Eleve/'.$request->input('rub').'/'.$request->input('srub'));
+        }
 
     /**
      * Remove the specified resource from storage.

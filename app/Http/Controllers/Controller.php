@@ -49,6 +49,18 @@ class Controller extends BaseController
         }
         return $head;
     }
+
+    public function crudheaderm($rub,$srub){
+        $head = '';
+
+        if(array_key_exists(1,session('menus')[$rub][1][$srub])){
+            if(in_array("MODIFIER",session('menus')[$rub][1][$srub][1])){
+                $head .= '<th class="sorting_disabled"></th>';
+            }
+        }
+        return $head;
+    }
+
     public function crudbody($rub,$srub,$route,$lienm,$liens,$id){
     //public function crudbody($rub,$srub,$route,$lienm,$liens,$id,$type=null){
       
@@ -88,6 +100,38 @@ class Controller extends BaseController
         }
         return $body;
     }
+
+    public function crudbodym($rub,$srub,$route,$lienm,$id){
+        //public function crudbody($rub,$srub,$route,$lienm,$liens,$id,$type=null){
+          
+            $body = '';
+            //dd($body);
+            if(array_key_exists(1,session('menus')[$rub][1][$srub])){
+              
+                if(array_key_exists(1,session('menus')[$rub][1][$srub])){
+                   
+                    if(in_array("MODIFIER",session('menus')[$rub][1][$srub][1])){
+                        
+                        $body .= '<td style="text-align: right" class="actionTd">';
+                        if($id!=""){
+                        
+                            $body .= '<a href=" '.$route($lienm,$id).'/'.$rub.'/'.$srub.'" > <i class="fas fa-pencil-alt" style="color: #060" ></i></a>';
+    
+                        }
+                        //$body .= '<a href=" '.$route($lienm,$id).'/'.$rub.'/'.$srub.'" >  <i class="fas fa-pencil-alt" style="color: #060" ></i></a>';
+                        $body .= '</td>';                        
+                    }
+                    
+                    if(in_array("ACTIVER_DESACTIVER",session('menus')[$rub][1][$srub][1])){
+                        $body .= '<td style="text-align: right" class="actionTd">';
+                        $body .= '<a  href="#" id="'.$route($liens,$id).'?rub='.$rub.'& srub='.$srub.'"';
+                        $body .= 'onclick="Activer(this.id);return false;"> <i class="fas fa-trash-alt" style="color: #F00" ></i> </a>';
+                        $body .= '</td>';
+                    }
+                }
+            }
+            return $body;
+        }
 
 
     public function crudbodyAlt($rub,$srub,$route,$lienm,$liens,$id){
