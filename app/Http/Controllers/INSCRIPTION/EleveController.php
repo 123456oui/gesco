@@ -17,19 +17,48 @@ class EleveController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($rub , $srub)
+    public function index(Request $request, $rub, $srub)
     {
-     
-        $eleves=Eleve::orderby('created_at','desc')->get();
-        foreach ($eleves as &$pratique) {
-            $pratique->Photo = !empty($pratique->Photo) ? asset('storage/' . $pratique->Photo) : '';
+        $annee = session('annee'); // tu peux stocker l'année scolaire en session
+    
+        $query = DB::table('eleves')
+            ->join('inscriptions', 'eleves.Matricule', '=', 'inscriptions.Matricule')
+            ->where('inscriptions.idanneescolaire', $annee);
+    
+        if ($request->filled('cycle')) {
+            $query->where('inscriptions.idcycle', $request->cycle);
         }
-        return view('Inscription.index')->with(['eleves'=>$eleves,'controler'=>$this,"rub"=>$rub,"srub"=>$srub]); 
-
-
-        //
-    }
-
+    
+        if ($request->filled('niveau')) {
+            $query->where('inscriptions.idniveau', $request->niveau);
+        }
+    
+        if ($request->filled('classe')) {
+            $query->where('inscriptions.idclasse', $request->classe);
+        }
+    
+        $eleves = $query->select('eleves.*')->orderBy('eleves.created_at', 'desc')->get();
+    
+        foreach ($eleves as &$eleve) {
+            $eleve->Photo = !empty($eleve->Photo) ? asset('storage/' . $eleve->Photo) : '';
+        }
+    
+        // Récupérer les listes pour les filtres
+        $cycles = DB::table('cycles')->get();
+        $niveaux = DB::table('niveaux')->get();
+        $classes = DB::table('classes')->get();
+    
+        return view('Inscription.index', [
+            'eleves' => $eleves,
+            'rub' => $rub,
+            'srub' => $srub,
+            'controler' => $this, // ici tu passes le contrôleur
+            'cycles' => $cycles,
+            'niveaux' => $niveaux,
+            'classes' => $classes,
+        ]);
+         }
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -282,5 +311,17 @@ class EleveController extends Controller
         return response()->json(['error' => $e->getMessage()], 500);
     }
 }
+public function niveauxParCycle($id)
+{
+    $niveaux = Niveau::where('idcycle', $id)->get();
+    return response()->json($niveaux);
+}
+
+public function classesParNiveau($id)
+{
+    $classes = Classe::where('idniveau', $id)->get();
+    return response()->json($classes);
+}
+
 
 }

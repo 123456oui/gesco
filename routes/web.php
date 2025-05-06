@@ -138,3 +138,5 @@ Route::get('/max/{id}', [ClasseController::class, 'getClasse']);
 
 
 
+Route::get('/niveaux-par-cycle/{id}', [EleveController::class, 'niveauxParCycle']);
+Route::get('/classes-par-niveau/{id}', [EleveController::class, 'classesParNiveau']);
