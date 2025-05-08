@@ -64,8 +64,13 @@ class EleveController extends Controller
      */
     public function create($rub, $srub)
     {
+        $annee = session('annee');
         $cycles=Cycle::orderby('created_at','desc')->get();
-        $classes=Classe::orderby('created_at','desc')->get();
+
+// Classes de l'année en cours
+        $classes = Classe::where('Annee', $annee)
+        ->orderBy('created_at', 'desc')
+        ->get();
         $subventions = Pcharge::all();
         return view('Inscription.create')->with(["classes"=>$classes,"subventions"=>$subventions,"cycles"=>$cycles,"rub"=>$rub,"srub"=>$srub]);
         //
@@ -95,6 +100,8 @@ class EleveController extends Controller
             'typeSubvention' => 'nullable|integer',
             'commentaireSubvention' => 'nullable|string',
             'logo' => 'required|mimes:jpeg,png,jpg,gif|max:2048',
+            'acte_naissance' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'photo_identite' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
         $classe=$request->input('niveau');
         $annee = session('annee');
@@ -136,6 +143,12 @@ class EleveController extends Controller
             if ($request->hasFile('logo')) {
                 $path = $request->file('logo')->store('eleves', 'public');
                 $neweleve->photo = $path; // Stocke juste le chemin relatif
+            }
+            if ($request->hasFile('acte_naissance')) {
+                $neweleve->acte_naissance = $request->file('acte_naissance')->store('eleves', 'public');
+            }
+            if ($request->hasFile('photo_identite')) {
+                $neweleve->billetin = $request->file('photo_identite')->store('eleves', 'public');
             }
             
             $neweleve->save();

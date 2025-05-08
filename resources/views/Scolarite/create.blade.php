@@ -24,7 +24,7 @@
 @section('content')
 <div class="container-fluid" >
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-md-10">
        
         
             <div class="card">
@@ -32,16 +32,16 @@
                
                     <div class="card-body">
 
-                    <fieldset>
+                    <fieldset class="mb-4">
                     <form class="needs-validation" novalidate method="POST" action="{{ route('scolarite.store') }}">
                     @csrf
                     <div class="row align-items-start">
                              <div class="col-md-5">
-                                       <label for="classe">{{ __('Classe:') }}<span style="color: red">*</span></label>
-                                          <select name="classe" id="classe" class="formulaire" >
+                                       <label for="cycle">{{ __('Cycle:') }}<span style="color: red">*</span></label>
+                                          <select name="cycle" id="cycle" class="formulaire" onchange="onCycleChange(this.value)">
                                                <option value=""></option>
-                                                   @foreach ($classes as $item)
-                                                <option value="{{ $item->id }}">{{ $item->libelleclasse }}</option>
+                                                   @foreach ($cycles as $item)
+                                                <option value="{{ $item->id }}">{{ $item->libellecycle }}</option>
                                                   @endforeach
                                             </select>
 
@@ -54,13 +54,28 @@
                                                    </span>
                                                    @enderror
                                         
-                                         <label for="matricule">{{ __('matricule:') }}<span style="color: red">*</span></label>
-                                          <select name="matricule" id="matricule" class="formulaire" >
+                                         <label for="niveau">{{ __('Niveaux:') }}<span style="color: red">*</span></label>
+                                          <select name="niveau" id="niveau" class="formulaire" onchange="onNiveauChange(this.value)" >
+                                               <option value=""></option>
+                                                   @foreach ($niveaux as $item)
+                                                <option value="{{ $item->id }}">{{ $item->libelleniveau }}</option>
+                                                  @endforeach
+                                         </select>
+                                         <label for="classe">{{ __('Classes:') }}<span style="color: red">*</span></label>
+                                          <select name="classe" id="classe" class="formulaire" onchange="onClasseChange(this.value)" >
                                                <option value=""></option>
                                                    @foreach ($classes as $item)
                                                 <option value="{{ $item->id }}">{{ $item->libelleclasse }}</option>
                                                   @endforeach
                                          </select>
+                                         <label for="matricule">{{ __('Matricule:') }}<span style="color: red">*</span></label>
+                                          <select name="matricule" id="matricule" class="formulaire" onchange="onMatriculeChange(this.value)" >
+                                               <option value=""></option>
+                                                   @foreach ($inscriptions as $item)
+                                                <option value="{{ $item->Matricule }}">{{ $item->Matricule }}</option>
+                                                  @endforeach
+                                         </select>
+                                        
 
                                          <div class="invalid-feedback">
                                                   {{__('formulaire.Obligation')}}
@@ -74,32 +89,35 @@
                                             <label for="nomlibelleE"> {{ __('Nom') }} <span
                                                     style="color: red">*</span> </label>
                                                          <input class="form-control @error('nomE') is-invalid @enderror"
-                                                          type="text" name="matriculeE" id="matriculeE" required
+                                                          type="text" name="matriculeE" id="matriculeE" required readonly
                                                           value="{{ old('matriculeE') }}">
 
                                              <label for="prenomlibelleE"> {{ __('Prénom(s)') }} <span
                                                     style="color: red">*</span> </label>
                                                          <input class="form-control @error('prenomE') is-invalid @enderror"
-                                                         type="text" name="prenomE" id="prenomE" required
+                                                         type="text" name="prenomE" id="prenomE" required readonly
                                                          value="{{ old('prenomE') }}">
-
-
                              </div>
-                             <div class="col-md-5">
+                             <div class="col-md-6">
                                          <div class="form-group row">
 
 
-                                            <label for="prenomlibelleE"> {{ __('Numéro Pièce :') }} <span
+                                            <label for="acte"> {{ __('Numéro d acte de naissance :') }} <span
                                                     style="color: red">*</span> </label>
-                                                         <input class="form-control @error('prenomE') is-invalid @enderror"
-                                                         type="text" name="prenomE" id="prenomE" required
-                                                         value="{{ old('prenomE') }}">
+                                                         <input class="form-control @error('acte') is-invalid @enderror"
+                                                         type="text" name="acte" id="acte" required readonly
+                                                         value="{{ old('acte') }}">
                                             
-                                            <label for="prenomlibelleE"> {{ __('Cumul des Versement :') }} <span
+                                            <label for="cumul"> {{ __('Cumul des Versement :') }} <span
                                                     style="color: red">*</span> </label>
-                                                         <input class="form-control @error('prenomE') is-invalid @enderror"
-                                                         type="text" name="prenomE" id="prenomE" required
-                                                         value="{{ old('prenomE') }}">
+                                                         <input class="form-control @error('cumul') is-invalid @enderror"
+                                                         type="text" name="cumul" id="cumul" required readonly
+                                                         value="{{ old('cumul') }}">
+                                            <label for="reste"> {{ __('Reste A verser :') }} <span
+                                                    style="color: red">*</span> </label>
+                                                         <input class="form-control @error('reste') is-invalid @enderror"
+                                                         type="text" name="reste" id="reste" required readonly
+                                                         value="{{ old('reste') }}">
 
 
 
@@ -107,45 +125,36 @@
                                               <label for="Versement"> {{ __('Versement :') }} <span
                                                     style="color: red">*</span> </label>
                                                          <input class="form-control @error('prenomE') is-invalid @enderror"
-                                                         type="text" name="prenomE" id="prenomE" required
+                                                         type="number" name="prenomE" id="prenomE" required
                                                          value="{{ old('prenomE') }}">
                                                          
-                                                         <fieldset>
-                                     
+                                        <fieldset class=" col-md-12 mb-2 mt-2">
+                                        <div class="dropzone d-flex justify-content-center justify-content-md-left mt-3 mb-3"
+                                              id="documentDropzone">
+                                              <label for="banque">{{ __('Banques:') }}<span style="color: red">*</span></label>
+                                                <select name="banque" id="banque" class="formulaire" >
+                                                    <option value=""></option>
+                                                        @foreach ($banques as $item)
+                                                        <option value="{{ $item->id }}">{{ $item-> 	libellebanque }}</option>
+                                                        @endforeach
+                                                </select>
+                                             </div>
                                         
                                          <label for="tiketBanque">{{ __('Tiket Banque :') }}</label>
                                              <div class="dropzone d-flex justify-content-center justify-content-md-left"
                                               id="documentDropzone">
                                              </div>
+                                             
+
                                      
                                             @error('documents.*')
                                             <span class="invalid-feedback">{{ $message }}</span>
                                               @enderror
                                   
                                     </fieldset>
-                                  
-
-
-
-
                                         </div>
-
-                                 
                              </div>
-
-
-
-
-                
-
                      </div>
-
-
-
-
-
-
-
                     </fieldset>
 
                     <div class="form-group row mb-0">
@@ -157,15 +166,9 @@
                                             </div>
                      </div>
                  </form>
-
                     </div>
                 </div>
             </div>
-
-
-
-
-
          </div>
     </div>
 </div>
@@ -182,6 +185,65 @@
             output.style.display = 'block';
         }
         reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+<script>
+    const allNiveaux = @json($niveaux);
+    const allInscriptions = @json($inscriptions);
+    const allClasses = @json($classes); 
+
+    function ranger(selectId, data, valueField, textField) {
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="selected disable">selectionner</option>'; // Réinitialiser
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item[valueField];
+            option.text = item[textField];
+            select.appendChild(option);
+        });
+    }
+    function onCycleChange(cycleId) {
+        // 🔁 Filtrer les niveaux
+        const filteredNiveaux = allNiveaux.filter(niveau => niveau.idcycle == cycleId);
+        ranger('niveau', filteredNiveaux, 'id', 'libelleniveau');
+
+        // 🔁 Filtrer les inscriptions
+        const filteredInscriptions = allInscriptions.filter(inscription => inscription.idcycle == cycleId);
+        ranger('matricule', filteredInscriptions, 'Matricule', 'Matricule');
+    }
+    function onNiveauChange(idNiveau) {
+        // 🔁 Filtrer les classes selon le niveau
+        const filteredClasses = allClasses.filter(classe => classe.idniveau == idNiveau);
+        ranger('classe', filteredClasses, 'id', 'libelleclasse');
+
+        // 🔁 Filtrer les inscriptions selon le niveau
+        const filteredInscriptions = allInscriptions.filter(inscription => inscription.idniveau == idNiveau);
+        ranger('matricule', filteredInscriptions, 'Matricule', 'Matricule');
+    }
+    function onClasseChange(idClasse) {
+        const filteredInscriptions = allInscriptions.filter(inscription => inscription.idclasse == idClasse);
+        ranger('matricule', filteredInscriptions, 'Matricule', 'Matricule');
+    }
+    function onMatriculeChange(matricule) {
+        if (!matricule) return;
+
+        fetch(`/get-eleve/${matricule}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+
+                    document.getElementById('matriculeE').value = data.eleve.Nom || '';
+                    document.getElementById('prenomE').value = data.eleve.Prenom || '';
+                    document.getElementById('acte').value = data.eleve.numbactnaiss || '';
+                    document.getElementById('cumul').value = data.total_regle ;
+                    document.getElementById('reste').value = data.reste ;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
     }
 </script>
 @endpush

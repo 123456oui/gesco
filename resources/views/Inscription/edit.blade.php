@@ -1,5 +1,25 @@
 @extends('layouts.template')
+@section('styles')
+<style>
+     .zone-container,
+        .zonep-container {
+            margin-top: 10px;
+            padding: 5px;
+            border: 2px dashed #ccc !important;
+            border-radius: 5px;
+        }
 
+        .dropzone {
+            border: 2px dashed #ccc !important;
+            border-radius: 5px;
+        }
+
+        .removeZone:first {
+            display: none;
+        }
+
+</style>
+@endsection
 @section('content')
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -156,45 +176,44 @@
                                                 @endforeach
                                             </select>
                                             <div id="divrest" style="display: none; justify-content: flex-end; margin: 10px 0;">
-    <div style="
-        background-color: #f0f4f8;
-        border: 1px solid #d1d5db;
-        padding: 5px 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        font-family: Arial, sans-serif;
-        font-size: 1rpx;
-        color: #111827;
-    ">
-        <label style="margin-right: 10px; font-weight: bold;">Place restante :</label>
-        <label id="rest"></label>
-    </div>
-</div>
-                                        </div class="rrow">
-                                        <fieldset class="mb-4 h-25">
+                                                <div style="
+                                                    background-color: #f0f4f8;
+                                                    border: 1px solid #d1d5db;
+                                                    padding: 5px 20px;
+                                                    border-radius: 5px;
+                                                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                                                    font-family: Arial, sans-serif;
+                                                    font-size: 1rpx;
+                                                    color: #111827;
+                                                ">
+                                                    <label style="margin-right: 10px; font-weight: bold;">Place restante :</label>
+                                                    <label id="rest"></label>
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <fieldset>
                                      <div class="form-group">
-                                        <div class="col-md-10">
+                                        <div class="col-md-12">
                                          <label for="documents">{{ __('Extrait de naissance') }}</label>
                                         <div class="dropzone d-flex justify-content-center justify-content-md-left"
-                                          id="documentDropzone">
+                                          id="my-dropzone" >
+                                          <input type="hidden" name="removed_extraits[]" id="removed-extraits">
                                         </div>
                                         </div>
                                             @error('documents.*')
                                             <span class="invalid-feedback">{{ $message }}</span>
                                             @enderror
                                      </div>
-                                       
                                     </fieldset>
 
-                                    <fieldset class=" h-25">
-                                     <div class="form-group">
-                                        <div class="col-md-10">
+                                    <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
                                               
                                          <label for="bullettinnotes">{{ __('Bulletin de notes :') }}</label>
-                                             <div class="dropzone d-flex justify-content-center justify-content-md-left"
-                                              id="bulletinDropzone">
-                                              <input type="file" name="images[]" id="hidden-images" style="display: none" multiple>
-                                              <input type="hidden" name="removed_images[]" id="removed-images">
+                                                 <div class="dropzone d-flex justify-content-center justify-content-md-left" id="bulletin-dropzone">
+                                                 <input type="file" name="images[]" id="hidden-images" style="display: none" multiple>
+                                                 <input type="hidden" name="removed_bulletins[]" id="removed-bulletins">
 
                                              </div>
                                         </div>
@@ -204,7 +223,6 @@
                                               @enderror
                                      </div>
                                     </fieldset>
-
                                 </fieldset>
 
                                 <fieldset class=" pt-4 flex-fill  mb-3" style="flex: 0 0 20% !important;">
@@ -259,6 +277,7 @@
         </div>
     </div>
 </div>
+@push('scripts')
 <script>
 const rub=@json($rub);
 const srub=@json($srub);
@@ -305,6 +324,37 @@ function previewLogo(event) {
         reader.readAsDataURL(file);
     }
 }
+Dropzone.autoDiscover = false;
+
+// Initialisation personnalisée
+const myDropzone = new Dropzone("#my-dropzone", {
+  url: "/upload", // <-- Remplace par l'URL de ton API backend
+  maxFiles: 1,
+  maxFilesize: 5, // Mo
+  acceptedFiles: "pdf/*",
+  dictDefaultMessage: "Glissez votre extrait de naissance ici ou cliquez pour parcourir",
+  dictFallbackMessage: "Votre navigateur ne prend pas en charge le glisser-déposer de fichiers.",
+        dictInvalidFileType: "Vous ne pouvez pas envoyer ce type de fichier.",
+        dictRemoveFile: "Supprimer le fichier",
+        dictMaxFilesExceeded: "Vous ne pouvez pas envoyer plus de fichiers.",
+  addRemoveLinks: true
+});
+
+const bulletinDropzone = new Dropzone("#bulletin-dropzone", {
+  url: "/upload", // <-- Remplace par l'URL de ton API backend
+  maxFiles: 1,
+  maxFilesize: 5, // Mo
+  acceptedFiles: "pdf/*",
+  dictDefaultMessage: "Glissez vos bulletins de notes  ici ou cliquez pour parcourir",
+  dictFallbackMessage: "Votre navigateur ne prend pas en charge le glisser-déposer de fichiers.",
+        dictInvalidFileType: "Vous ne pouvez pas envoyer ce type de fichier.",
+        dictRemoveFile: "Supprimer le fichier",
+        dictMaxFilesExceeded: "Vous ne pouvez pas envoyer plus de fichiers.",
+  addRemoveLinks: true
+});
+
+
 
 </script>
+@endpush
 @endsection

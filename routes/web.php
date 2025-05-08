@@ -106,11 +106,11 @@ Route::get('classe/{rub}/{srub}',[ClasseController::class,'index']);
 Route::get('classe/create/{rub}/{srub}',[ClasseController::class,'create']);
 Route::get('classe/{id}/edit/{rub}/{srub}',[ClasseController::class,'edit']);
 
-Route::resource('scolarite',ScolariteController::class);
-Route::post('scolarite',[ScolariteController::class,'store'])->name('scolarite.store');
-Route::get('scolarite/{rub}/{srub}',[ScolariteController::class,'index']);
-Route::get('scolarite/create/{rub}/{srub}',[ScolariteController::class,'create']);
-Route::get('scolarite/{id}/edit/{rub}/{srub}',[ScolariteController::class,'edit']);
+Route::resource('Scolarite',ScolariteController::class);
+Route::post('Scolarite',[ScolariteController::class,'store'])->name('scolarite.store');
+Route::get('Scolarite/{rub}/{srub}',[ScolariteController::class,'index']);
+Route::get('Scolarite/create/{rub}/{srub}',[ScolariteController::class,'create']);
+Route::get('Scolarite/{id}/edit/{rub}/{srub}',[ScolariteController::class,'edit']);
 
 Route::resource('cantine',ClasseController::class);
 Route::post('cantine',[CantineController::class,'store'])->name('cantine.store');
@@ -140,3 +140,5 @@ Route::get('/max/{id}', [ClasseController::class, 'getClasse']);
 
 Route::get('/niveaux-par-cycle/{id}', [EleveController::class, 'niveauxParCycle']);
 Route::get('/classes-par-niveau/{id}', [EleveController::class, 'classesParNiveau']);
+Route::get('/get-eleve/{matricule}', [ScolariteController::class, 'getEleve']);
+

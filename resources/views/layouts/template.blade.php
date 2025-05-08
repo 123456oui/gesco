@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="{{asset("css/sigobs.css")}}" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="icon" href="{{asset('images/favicon.png')}}" type="image/x-icon"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
         @yield('styles')
     </head>
     <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -341,6 +342,7 @@
         <script src="{{ mix('js/app.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/main.js') }}" defer></script>
         <script src="{{ asset('js/jquery-1.10.2.min.js') }}"></script>
+        <script src="{{ asset('js/dropzone.min.js') }}"></script>
         <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('js/inputmask/jquery.inputmask.min.js')}}"></script>
         <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>

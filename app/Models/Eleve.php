@@ -14,6 +14,7 @@ class Eleve extends Model
 
     protected $fillable = [
         'Matricule', 'Nom', 'Prenom', 'Nomp', 'Nomm','numbactnaiss',
-        'Photo', 'NumtelM', 'NumtelP', 'datenais', 'lieunais', 'Sante', 'created_at',
+        'Photo', 'NumtelM', 'NumtelP', 'datenais', 'lieunais', 'Sante', 
+        'created_at','acte_naissance', 'billetin',
     ];
 }

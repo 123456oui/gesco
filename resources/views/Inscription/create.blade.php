@@ -73,9 +73,11 @@
                     <fieldset>
 <form class="needs-validation" 
       novalidate 
+      id="main-form"
       method="POST" 
       action="{{ route('Eleve.store', ['rub' => $rub, 'srub' => $srub]) }}" 
-      enctype="multipart/form-data">                                 @csrf
+      enctype="multipart/form-data">  
+        @csrf
                                  <div class="row align-items-start">
                                         <div class="col-md-6">
                                                  <label for="Etaorigine"> {{ __('Etablissement d\'Origine') }} <span
@@ -302,26 +304,23 @@
                                         <div class="col-md-12">
                                          <label for="documents">{{ __('Extrait de naissance') }}</label>
                                         <div class="dropzone d-flex justify-content-center justify-content-md-left"
-                                          id="documentDropzone">
+                                          id="my-dropzone" >
+                                          <input type="file" name="acte_naissance" id="acte_naissance" class="d-none" />
                                         </div>
                                         </div>
                                             @error('documents.*')
                                             <span class="invalid-feedback">{{ $message }}</span>
                                             @enderror
                                      </div>
-                                       
                                     </fieldset>
 
                                     <fieldset>
-                                     <div class="form-group">
+                                    <div class="form-group">
                                         <div class="col-md-12">
                                               
                                          <label for="bullettinnotes">{{ __('Bulletin de notes :') }}</label>
-                                             <div class="dropzone d-flex justify-content-center justify-content-md-left"
-                                              id="documentDropzone">
-                                              <input type="file" name="images[]" id="hidden-images" style="display: none" multiple>
-                                              <input type="hidden" name="removed_images[]" id="removed-images">
-
+                                                 <div class="dropzone d-flex justify-content-center justify-content-md-left" id="bulletin-dropzone" >
+                                                 <input type="file" name="photo_identite" id="photo_identite" class="d-none" />
                                              </div>
                                         </div>
                                         
@@ -427,7 +426,45 @@ function matricule(niveau_id) {
     });
 }
 
+Dropzone.autoDiscover = false; // évite l'auto-instanciation
 
+// Dropzone pour l'acte de naissance
+const acteDropzone = new Dropzone("#my-dropzone", {
+    url: "#",
+    autoProcessQueue: false,
+    maxFiles: 1,
+    addRemoveLinks: true,
+    acceptedFiles: ".pdf",
+    dictDefaultMessage: "Déposez l'acte de naissance ici",
+    init: function () {
+        this.on("addedfile", function (file) {
+            let input = document.getElementById("acte_naissance");
+            let dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            input.files = dataTransfer.files;
+        });
+    }
+});
+
+// Dropzone pour la photo d'identité
+const photoDropzone = new Dropzone("#bulletin-dropzone", {
+    url: "#",
+    autoProcessQueue: false,
+    maxFiles: 1,
+    addRemoveLinks: true,
+    acceptedFiles: ".pdf",
+    dictDefaultMessage: "Déposez les billetins ici",
+    init: function () {
+        this.on("addedfile", function (file) {
+            let input = document.getElementById("photo_identite");
+            let dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            input.files = dataTransfer.files;
+        });
+    }
+});
+
+// Interception du formulaire
 
 </script>
 

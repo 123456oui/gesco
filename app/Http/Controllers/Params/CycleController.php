@@ -109,9 +109,9 @@ class CycleController extends Controller
     public function cycleniveau(Request $request,$rub, $srub)
     {
       $cycleId=$request->get( 'cycleId');
-      
+      $annee = session('annee');
        if ($cycleId) {
-        $niveaux=Niveau::where('idcycle', $cycleId)->get();
+        $niveaux=Niveau::where('idcycle', $cycleId)->where('annee', $annee)->get();
         return response()->json(["success"  =>true,"niveaux"=>$niveaux ]);
     }
 
