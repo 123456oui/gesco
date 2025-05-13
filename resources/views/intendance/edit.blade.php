@@ -31,14 +31,14 @@
 
 </style>
 @section('content')
-<div class="container " >
+<div class="container">
     <div class="main-card card">
         <div class="card-header py-0">
             <h4>{{ __('Détail des règlements') }}</h4>
         </div>
     </div>
 
-    <div class="row mt-4 mb-4">
+    <div class="row mt-4">
         {{-- Informations sur l'élève (à gauche) --}}
         <div class="col-md-6">
             <fieldset class=" p-3 mb-2">
@@ -71,7 +71,7 @@
         </div>
 
         {{-- Informations des règlements (à droite) --}}
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6">
             <fieldset class="p-3 mb-2">
                 <legend class="w-auto">{{ __('Détails des paiements') }}</legend>
                 <div class="form-group">
@@ -89,7 +89,6 @@
 
                 {{-- Détails des paiements --}}
                 <h4>{{ __('Historique des paiements') }}</h4>
-                <div style="max-height: 280px; overflow-y: auto;">
                 <table class="table table-bordered matable">
                     <thead>
                         <tr>
@@ -108,7 +107,6 @@
                         @endforeach
                     </tbody>
                 </table>
-                </div>
             </fieldset>
         </div>
     </div>

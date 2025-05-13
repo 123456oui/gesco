@@ -14,6 +14,7 @@ use App\Http\Controllers\Params\ClasseController;
 use App\Http\Controllers\Params\BanqueController;
 use App\Http\Controllers\Params\PchargeController;
 use App\Http\Controllers\Reglement\ScolariteController;
+use App\Http\Controllers\Reglement\IntendanceController;
 use App\Http\Controllers\Reglement\CantineController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -112,6 +113,11 @@ Route::get('Scolarite/{rub}/{srub}',[ScolariteController::class,'index']);
 Route::get('Scolarite/create/{rub}/{srub}',[ScolariteController::class,'create']);
 Route::get('Scolarite/{id}/edit/{rub}/{srub}',[ScolariteController::class,'edit']);
 
+Route::resource('intendance',IntendanceController::class);
+Route::get('intendance/{rub}/{srub}',[IntendanceController::class,'index']);
+Route::post('intendance',[IntendanceController::class,'store'])->name('intendance.store');
+
+
 Route::resource('cantine',ClasseController::class);
 Route::post('cantine',[CantineController::class,'store'])->name('cantine.store');
 Route::get('cantine/{rub}/{srub}',[CantineController::class,'index']);
@@ -141,4 +147,6 @@ Route::get('/max/{id}', [ClasseController::class, 'getClasse']);
 Route::get('/niveaux-par-cycle/{id}', [EleveController::class, 'niveauxParCycle']);
 Route::get('/classes-par-niveau/{id}', [EleveController::class, 'classesParNiveau']);
 Route::get('/get-eleve/{matricule}', [ScolariteController::class, 'getEleve']);
+Route::get('/reglements/recu/{id}', [ScolariteController::class, 'recu'])->name('Scolarite.recu');
+Route::get('/reglement/recu/{id}', [IntendanceController::class, 'recu'])->name('intendance.recu');
 

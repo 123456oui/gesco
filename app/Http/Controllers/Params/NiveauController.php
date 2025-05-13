@@ -18,7 +18,7 @@ class NiveauController extends Controller
     public function index($rub = null, $srub=null)
     {
         //
-        $niveaus=Niveau::orderby('created_at','desc')->get();
+        $niveaus=Niveau::orderby('created_at','desc')->Where('annee','=' ,session('annee'))->get();
         return view('niveau.index')->with(['niveaus'=>$niveaus,'controler'=>$this,"rub"=>$rub,"srub"=>$srub]);
     }
 
@@ -39,12 +39,11 @@ class NiveauController extends Controller
     {
        
         $this->validate($request,[
-            'Annee'=>['required','min:4'],
             'niveau'=>['required','min:2'],
             'Montantscolarite'=>['required','numeric'],
         ]);
         //$valeurtest=Niveau::find($request->input('Annee'),$request->input('niveau'));
-        $valeurtest=Niveau::where('annee', '=',$request->input('Annee'))->where('libelleniveau','=',$request->input('niveau'))->get();
+        $valeurtest=Niveau::where('annee', '=',session('annee'))->where('libelleniveau','=',$request->input('niveau'))->get();
         if($valeurtest->isNotEmpty())
         {
          //dd( $valeurtest);
@@ -52,7 +51,7 @@ class NiveauController extends Controller
         }else{
         // dd( $valeurtest);
         $niveau = new Niveau();
-        $niveau->annee=$request->input('Annee');
+        $niveau->annee=session('annee');
         $niveau->libelleniveau=$request->input('niveau');
         $niveau->Montantscolarite=$request->input('Montantscolarite');
         $niveau->idcycle=$request->input('cycle');

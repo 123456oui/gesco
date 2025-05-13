@@ -19,7 +19,7 @@ class ClasseController extends Controller
     public function index($rub = null, $srub=null)
     {
         //
-        $classesp=Classe::orderby('created_at','desc')->get();
+        $classesp=Classe::orderby('created_at','desc')->Where('Annee','=' ,session('annee'))->get();
         return view('classe.index')->with(['classesp'=>$classesp,'controler'=>$this,"rub"=>$rub,"srub"=>$srub]);
     
     }
@@ -29,7 +29,7 @@ class ClasseController extends Controller
      */
     public function create($rub, $srub)
     {
-        $niveaux = NIVEAU::orderby('created_at','desc')->get();
+        $niveaux = NIVEAU::orderby('created_at','desc')->Where('annee','=' ,session('annee'))->get();
         return view('classe.create')->with(["niveaux"=>$niveaux,"rub"=>$rub,"srub"=>$srub]);
         //
     }
@@ -40,11 +40,10 @@ class ClasseController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-               'Annee'=>['required','min:4'], 
-               'classe'=>['required','min:2'], 
+                            'classe'=>['required','min:2'], 
         ]);
         //$valeurtest=Niveau::find($request->input('Annee'),$request->input('niveau'));
-        $valeurtest=Classe::where('Annee', '=',$request->input('Annee'))->where('libelleclasse','=',$request->input('classe'))->get();
+        $valeurtest=Classe::where('Annee', '=',session('annee'))->where('libelleclasse','=',$request->input('classe'))->get();
         if($valeurtest->isNotEmpty())
         {
          //dd( $valeurtest);
@@ -52,7 +51,8 @@ class ClasseController extends Controller
         }else{
 
         $classe  = new Classe();
-        $classe->annee=$request->input('Annee');
+        $classe->annee=session('annee');
+        $classe->max=$request->input('Max');
         $classe->libelleclasse=$request->input('classe');
         $classe->idniveau=$request->input('niveau');
         $classe->save(); 
@@ -74,8 +74,9 @@ class ClasseController extends Controller
      */
     public function edit($id,$rub = null, $srub=null)
     {
+        $annee = session('annee');
         $classe=Classe::find($id);
-        $niveaux = Niveau::orderby('created_at','desc')->get();
+        $niveaux = Niveau::orderby('created_at','desc')->where('annee', $annee)->get();
         return view('classe.edit')->with(['niveaux'=>$niveaux,'classe'=>$classe,"rub"=>$rub,"srub"=>$srub]);
         //
     }

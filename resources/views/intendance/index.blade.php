@@ -50,7 +50,7 @@
                     <div class="card-body">
 
                     <fieldset class="mb-4">
-                    <form class="needs-validation" novalidate method="POST" action="{{ route('scolarite.store') }}" enctype="multipart/form-data">
+                    <form class="needs-validation" novalidate method="POST" action="{{ route('intendance.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row align-items-start">
                              <div class="col-md-5">
@@ -179,7 +179,6 @@
                                          <input type="hidden" name="rub" value="{{ $rub }}">
                                          <input type="hidden" name="srub" value="{{ $srub }}">
                                                  <input type="submit" id="valider"  value="{{__('Enregistrer')}}" class="btn btn-primary btnEnregistrer"/>
-                                                <a href="{{route('Scolarite.index')}}/{{$rub}}/{{$srub}}"><input type="button" id="annuler" value={{__('Annuler')}} class="btn btn-primary btnAnnuler"/></a>
                                             </div>
                      </div>
                  </form>
@@ -193,6 +192,16 @@
 
 
 @push('scripts')
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: '{{ session('success') }}',
+        showConfirmButton: false,
+        timer: 20000
+    });
+</script>
+@endif
 @if(session('error'))
 <script>
     Swal.fire({

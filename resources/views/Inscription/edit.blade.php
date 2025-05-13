@@ -192,37 +192,35 @@
                                             </div>
                                             </div>
                                             <fieldset>
-                                     <div class="form-group">
-                                        <div class="col-md-12">
-                                         <label for="documents">{{ __('Extrait de naissance') }}</label>
-                                        <div class="dropzone d-flex justify-content-center justify-content-md-left"
-                                          id="my-dropzone" >
-                                          <input type="hidden" name="removed_extraits[]" id="removed-extraits">
-                                        </div>
-                                        </div>
-                                            @error('documents.*')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                            @enderror
-                                     </div>
-                                    </fieldset>
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <label for="documents">{{ __('Extrait de naissance') }}</label>
+                                                        <div class="dropzone d-flex justify-content-center justify-content-md-left"
+                                                            id="my-dropzone" >
+                                                            <input type="file" name="extraits" id="extraits" class="d-none" />
+                                                        </div>
+                                                    </div>
+                                                    @error('documents.*')
+                                                        <span class="invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </fieldset>
 
-                                    <fieldset>
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                              
-                                         <label for="bullettinnotes">{{ __('Bulletin de notes :') }}</label>
-                                                 <div class="dropzone d-flex justify-content-center justify-content-md-left" id="bulletin-dropzone">
-                                                 <input type="file" name="images[]" id="hidden-images" style="display: none" multiple>
-                                                 <input type="hidden" name="removed_bulletins[]" id="removed-bulletins">
+                                            <fieldset>
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <label for="bulletinnotes">{{ __('Bulletin de notes :') }}</label>
+                                                        <div class="dropzone d-flex justify-content-center justify-content-md-left" id="bulletin-dropzone" >
+                                                            <input type="file" name="bulletinnotes" id="bulletinnotes" class="d-none" />
 
-                                             </div>
-                                        </div>
-                                        
-                                            @error('documents.*')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                              @enderror
-                                     </div>
-                                    </fieldset>
+                                                        </div>
+                                                    </div>
+                                                    @error('documents.*')
+                                                        <span class="invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </fieldset>
+
                                 </fieldset>
 
                                 <fieldset class=" pt-4 flex-fill  mb-3" style="flex: 0 0 20% !important;">
@@ -324,37 +322,108 @@ function previewLogo(event) {
         reader.readAsDataURL(file);
     }
 }
-Dropzone.autoDiscover = false;
-
-// Initialisation personnalisée
-const myDropzone = new Dropzone("#my-dropzone", {
-  url: "/upload", // <-- Remplace par l'URL de ton API backend
-  maxFiles: 1,
-  maxFilesize: 5, // Mo
-  acceptedFiles: "pdf/*",
-  dictDefaultMessage: "Glissez votre extrait de naissance ici ou cliquez pour parcourir",
-  dictFallbackMessage: "Votre navigateur ne prend pas en charge le glisser-déposer de fichiers.",
-        dictInvalidFileType: "Vous ne pouvez pas envoyer ce type de fichier.",
-        dictRemoveFile: "Supprimer le fichier",
-        dictMaxFilesExceeded: "Vous ne pouvez pas envoyer plus de fichiers.",
-  addRemoveLinks: true
-});
-
-const bulletinDropzone = new Dropzone("#bulletin-dropzone", {
-  url: "/upload", // <-- Remplace par l'URL de ton API backend
-  maxFiles: 1,
-  maxFilesize: 5, // Mo
-  acceptedFiles: "pdf/*",
-  dictDefaultMessage: "Glissez vos bulletins de notes  ici ou cliquez pour parcourir",
-  dictFallbackMessage: "Votre navigateur ne prend pas en charge le glisser-déposer de fichiers.",
-        dictInvalidFileType: "Vous ne pouvez pas envoyer ce type de fichier.",
-        dictRemoveFile: "Supprimer le fichier",
-        dictMaxFilesExceeded: "Vous ne pouvez pas envoyer plus de fichiers.",
-  addRemoveLinks: true
-});
 
 
 
 </script>
+<script>
+Dropzone.autoDiscover = false;
+
+const acteNaissanceDropzone = new Dropzone("#my-dropzone", {
+    url: "#", // Pas d'upload direct ici
+    autoProcessQueue: false,
+    addRemoveLinks: true,
+    maxFiles: 1, // Seulement 1 fichier
+    dictDefaultMessage: "Déposez l'extrait ici ou cliquez",
+    maxFilesize: 5,
+    dictFileTooBig: "Le fichier est trop volumineux (@{{filesize}} Mo). Taille max : @{{maxFilesize}} Mo.",
+    init: function () {
+        const existingFileUrl = "{{ $eleve->acte_naissance ?? '' }}";
+
+        if (existingFileUrl) {
+            const mockFile = {
+                name: "extrait_actuel.pdf",
+                size: 123456,
+                type: 'application/pdf'
+            };
+
+            this.emit("addedfile", mockFile);
+            this.emit("complete", mockFile);
+
+            // Ajouter une icône PDF cliquable
+            if (mockFile.previewElement) {
+                const icon = document.createElement("img");
+                icon.src = "/images/OIP.jpeg"; // à remplacer par ton icône PDF
+                icon.style.width = "30px";
+                icon.style.height = "30";
+
+                const link = document.createElement("a");
+                link.href = existingFileUrl;
+                link.target = "_blank";
+                link.appendChild(icon);
+
+                mockFile.previewElement.appendChild(link);
+            }
+
+            mockFile.previewElement.classList.add('dz-success', 'dz-complete');
+        }
+        this.on("addedfile", function (file) {
+            let input = document.getElementById("extraits");
+            let dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            input.files = dataTransfer.files;
+        });
+    }
+});
+
+const bulletinDropzone = new Dropzone("#bulletin-dropzone", {
+    url: "#", // Pas d'upload direct ici
+    autoProcessQueue: false,
+    addRemoveLinks: true,
+    maxFilesize: 5, // Seulement 1 fichier
+    dictDefaultMessage: "Ajoutez le bulletin ici",
+    maxFilesize: 5.5, 
+    dictFileTooBig: "Le fichier est trop volumineux (@{{filesize}} Mo). Taille max : @{{maxFilesize}} Mo.",
+    init: function () {
+        const existingFileUrl = "{{ $eleve->billetin ?? '' }}";
+
+        if (existingFileUrl) {
+            const mockFile = {
+                name: "Billetin_actuelle.pdf",
+                size: 123456,
+                type: 'application/pdf'
+            };
+
+            this.emit("addedfile", mockFile);
+            this.emit("complete", mockFile);
+
+            // Ajouter une icône PDF cliquable
+            if (mockFile.previewElement) {
+                const icon = document.createElement("img");
+                icon.src = "/images/OIP.jpeg"; // à remplacer par ton icône PDF
+                icon.style.width = "30px";
+                icon.style.height = "30";
+
+                const link = document.createElement("a");
+                link.href = existingFileUrl;
+                link.target = "_blank";
+                link.appendChild(icon);
+
+                mockFile.previewElement.appendChild(link);
+            }
+
+            mockFile.previewElement.classList.add('dz-success', 'dz-complete');
+        }
+        this.on("addedfile", function (file) {
+            let input = document.getElementById("bulletinnotes");
+            let dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            input.files = dataTransfer.files;
+        });
+    }
+});
+
+</script>
+
 @endpush
 @endsection

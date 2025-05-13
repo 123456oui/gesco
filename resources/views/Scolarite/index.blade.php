@@ -2,10 +2,9 @@
 
 @section('content')
 <div class="container-fluid">
-<div class=" justify-content-center">
-    <div class="w-100 mb-2 px-4">
-        <form method="GET" id="filterForm" class="form-inline" action="{{ url('Scolarite/' . $rub . '/' . $srub) }}" >
-                    <div class="form-group mx-sm-3 mb-2">
+    <div class="w-100 mb-4 px-5">
+        <form method="GET" id="filterForm" class="col-md-6" action="{{ url('Scolarite/' . $rub . '/' . $srub) }}" >
+                    <div class="form-group ">
                         <label for="etat" class="mr-2">{{ __('Statut paiement') }}</label>
                         <select name="etat" class="form-control" onchange="document.getElementById('filterForm').submit();">
                             <option value="">-- Tous --</option>
@@ -15,7 +14,7 @@
                     </div>
                 </form>
         </div>
-    </div>
+
 
     <div class="main-card card">
         <div class="card-header py-0">
@@ -54,7 +53,7 @@
                         <td>
                             <img src="{{ $item->Photo }}" 
                                  alt="Photo de {{ $item->Nom }}" 
-                                 style="height: 250px; width: 250px; object-fit: cover; border-radius: 50%; display: block; margin: auto;">
+                                 style=" max-width: 100%; height: 250px; width: 250px; object-fit: cover; border-radius: 50%; display: block; margin: auto;">
                         </td>
                         @php
                             $route = 'route';

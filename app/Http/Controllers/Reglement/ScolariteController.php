@@ -101,7 +101,66 @@ class ScolariteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'matricule' => 'required|string|exists:eleves,Matricule',
+            'banque' => 'required|exists:banques,id',
+            'versement' => 'required|numeric|min:1',
+            'ticketbanque' => 'nullable|file|mimes:pdf|max:4096', // max 2MB
+        ]);
+        $rub = $request->input('rub');
+        $srub = $request->input('srub');
+        $annee = session('annee'); 
+        $reglements = Reglement::where('id_eleve', $request->input('matricule'))
+            ->where('annee', $annee)
+            ->get();
+
+        // 4. Somme des montants réglés
+        $total_regle = $reglements->sum('montant')+ $request->input('versement');
+        $totalInscriptions = DB::table('inscriptions')
+        ->where('idanneescolaire', $annee)
+        ->where('Matricule', $request->input('matricule'))->first();
+        if($request->input('cumul')< $totalInscriptions->montantscolariteE){
+            if($totalInscriptions->montantscolariteE- $total_regle >0 ){
+                $request->validate([
+                    'matricule' => 'required|string|exists:eleves,Matricule',
+                    'banque' => 'required|exists:banques,id',
+                    'versement' => 'required|numeric|min:1',
+                    'ticketbanque' => 'nullable|file|mimes:pdf|max:4096', // max 2MB
+                ]);
+                $ticketPath = null;
+                if ($request->hasFile('banques')) {
+                    $ticketPath = $request->file('banques')->store('tickets', 'public');// stocké dans storage/app/public/tickets
+                    $reglement = Reglement::create([
+                        'id_eleve' => $request->input('matricule'),
+                        'id_banque' => $request->input('banque'),
+                        'montant' => $request->input('versement'),
+                        'cumule' => $request->input('cumul'), // ou calculer le nouveau cumul
+                        'annee' => $annee,
+                        'ticketbanque' => $ticketPath,
+                    ]);
+                    //$reglement ->save();
+                    //
+                    return redirect()->route('Scolarite.recu', ['id' => $reglement->id,
+                    'rub' => $rub,
+                    'srub' => $srub,]);
+                    //return redirect('Scolarite/'.$request->input('rub').'/'.$request->input('srub'));
+                }
+                else{
+                    return redirect()->back()->with('error', 'Veillez joindre une piece comptable  ');
+                }
+                
+                
+            }else{
+                return redirect()->back()->with('error', 'votre montant est supperieur au montant attendu ');
+            }  
+        }
+        else{
+            return redirect()->back()->with('error', 'vous etes deja a jours pour cette annee');
+
+        }
+        //dd($totalInscriptions->montantscolariteE);
+
+        
     }
 
     /**
@@ -144,6 +203,7 @@ class ScolariteController extends Controller
         // 5. Reste à payer
         $montant_total = $inscription->montantscolariteE;
         $reste = $montant_total - $total_regle;
+        
 
         return view('Scolarite.edit', compact('eleve', 'inscription', 'reglements', 'total_regle', 'reste'));
 
@@ -204,5 +264,31 @@ class ScolariteController extends Controller
         'reste' => $reste,
     ]);
 }
+
+public function recu (Request $request,$id)
+{
+    $annee = session('annee');
+    $rub = $request->input('rub');
+    $srub = $request->input('srub');
+    $reglement = Reglement::with('eleve', 'banque')->findOrFail($id);
+    $reglement->eleve->Photo=!empty($reglement->eleve->Photo) ? asset('storage/' . $reglement->eleve->Photo) : '';
+    $inscription = DB::table('inscriptions')
+    ->where('idanneescolaire', $annee)
+    ->where('Matricule', $reglement->eleve->Matricule)
+    ->first();
+    $classe = DB::table('classes')
+    ->where('Annee', $annee)
+    ->where('id', $inscription->idclasse)
+    ->first();
+    $autresReglements = Reglement::where('annee', $annee)
+    ->where('id', '!=', $id)
+    ->where('id_eleve', $reglement->eleve->Matricule)
+    ->with('eleve', 'banque')
+    ->get();
+    $montantTotalAutres = $autresReglements->sum('montant')+$reglement->montant ;
+    $rest=$inscription->montantscolariteE - $montantTotalAutres;
+    return view('Scolarite.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest' ));
+}
+
 
 }

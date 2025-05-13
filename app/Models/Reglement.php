@@ -9,7 +9,7 @@ class Reglement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id_eleve', 'id_banque', 'montant', 'cumule' , 'annee'];
+    protected $fillable = ['id_eleve', 'id_banque', 'montant', 'cumule' , 'annee' ,'ticketbanque'];
 
     public function eleve()
     {

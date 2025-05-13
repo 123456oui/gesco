@@ -10,6 +10,8 @@ use App\Models\Niveau;
 use Illuminate\Http\Request;
 use App\Models\Pcharge;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class EleveController extends Controller
@@ -45,9 +47,8 @@ class EleveController extends Controller
     
         // Récupérer les listes pour les filtres
         $cycles = DB::table('cycles')->get();
-        $niveaux = DB::table('niveaux')->get();
-        $classes = DB::table('classes')->get();
-    
+        $niveaux = DB::table('niveaux')->where('annee','=',$annee)->get();
+        $classes = DB::table('classes')->where('Annee','=',$annee)->get();
         return view('Inscription.index', [
             'eleves' => $eleves,
             'rub' => $rub,
@@ -182,10 +183,12 @@ class EleveController extends Controller
     public function edit(string $id,$rub, $srub)
     {
         $pcharges=Pcharge::all();
-        $classes=Classe::all();
+        $classes=Classe::where('Annee','=', $annee)->get();
         $cycles= Cycle::all();
-        $niveaux= Niveau::all();
+        $niveaux= Niveau::where('annee','=',$annee )->get();
         $eleve = Eleve::where('Matricule', $id)->first();
+        $eleve->acte_naissance = !empty($eleve->acte_naissance) ? asset('storage/' . $eleve->acte_naissance) : '';
+        $eleve->billetin = !empty($eleve-> billetin ) ? asset('storage/' . $eleve->billetin ) : '';
         $eleve->Photo = !empty($eleve->Photo) ? asset('storage/' . $eleve->Photo) : '';
         $annee=session('annee');
         $totalInscriptions = DB::table('inscriptions')
@@ -213,8 +216,7 @@ class EleveController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id )
-    {
-        //
+    {        //
         $annee = session('annee');
         $eleve = Eleve::where('Matricule', $id)->first();
         $nom = $request->input('nom');
@@ -244,6 +246,24 @@ class EleveController extends Controller
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('eleves', 'public');
             $eleve->Photo = $path;
+        }
+        if ($request->hasFile('extraits')) {
+            // Supprimer l'ancien fichier s'il existe
+            if ($eleve->acte_naissance && Storage::disk('public')->exists($eleve->acte_naissance)) {
+                Storage::disk('public')->delete($eleve->acte_naissance);
+            }
+            // Enregistrer le nouveau fichier
+            $path = $request->file('extraits')->store('eleves', 'public');
+            $eleve->acte_naissance = $path;
+        }
+        if ($request->hasFile('bulletinnotes')) {
+            // Supprimer l'ancien fichier s'il existe
+            if ($eleve->billetin && Storage::disk('public')->exists($eleve->billetin)) {
+                Storage::disk('public')->delete($eleve->billetin);
+            }
+            // Enregistrer le nouveau fichier
+            $path = $request->file('bulletinnotes')->store('eleves', 'public');
+            $eleve->billetin = $path;
         }
         $classe=$request->input('niveau');
         $niveau = Niveau::where('id', $classe)
