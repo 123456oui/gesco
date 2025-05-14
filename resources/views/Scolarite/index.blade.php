@@ -29,32 +29,24 @@
             <table id="example" class="table table-striped table-bordered table-hover dataTable">
                 <thead>
                     <tr>
-                        <th>{{__('Matricule Eleve')}}</th>
-                        <th>{{__('Nom Eleve')}}</th>
-                        <th>{{__('Prenom Eleve')}}</th>
+                        <th>{{__('Matricule ')}}</th>
+                        <th>{{__('Nom ')}}</th>
+                        <th>{{__('Prenom ')}}</th>
                         <th>{{__('Nom Pere')}}</th>
                         <th>{{__('Nom Mere')}}</th>
                         <th>{{__('Date de naissance')}}</th>
-                        <th>{{__('Numero Naissance')}}</th>
-                        <th>{{__('Photo Eleve')}}</th>
                         @php echo $controler->crudheaderm($rub,$srub); @endphp
                     </tr>
                 </thead>
                 <tbody>
                 @foreach($eleves as $item)
-                    <tr style="height: 250px;">
+                    <tr >
                         <td>{{ $item->Matricule }}</td>
                         <td>{{ $item->Nom }}</td>
                         <td>{{ $item->Prenom }}</td>
                         <td>{{ $item->Nomp }}</td>
                         <td>{{ $item->Nomm }}</td>
                         <td>{{ $item->datenais }}</td>
-                        <td>{{ $item->numbactnaiss }}</td>
-                        <td>
-                            <img src="{{ $item->Photo }}" 
-                                 alt="Photo de {{ $item->Nom }}" 
-                                 style=" max-width: 100%; height: 250px; width: 250px; object-fit: cover; border-radius: 50%; display: block; margin: auto;">
-                        </td>
                         @php
                             $route = 'route';
                             echo $controler->crudbodym($rub,$srub,$route,'Scolarite.edit',$item->Matricule);

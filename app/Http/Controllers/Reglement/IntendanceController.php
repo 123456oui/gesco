@@ -50,7 +50,7 @@ class IntendanceController  extends Controller
         ->where('Matricule', $request->input('matricule'))->first();
         
         if($request->input('cumul')< $totalInscriptions->montantscolariteE){
-            if($totalInscriptions->montantscolariteE- $total_regle >0 ){
+            if($totalInscriptions->montantscolariteE- $total_regle >=0 ){
                 $request->validate([
                     'matricule' => 'required|string|exists:eleves,Matricule',
                     'banque' => 'required|exists:banques,id',
