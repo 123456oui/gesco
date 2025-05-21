@@ -15,6 +15,7 @@ use App\Http\Controllers\Params\BanqueController;
 use App\Http\Controllers\Params\PchargeController;
 use App\Http\Controllers\Reglement\ScolariteController;
 use App\Http\Controllers\Reglement\IntendanceController;
+use App\Http\Controllers\Reglement\StateControler;
 use App\Http\Controllers\Reglement\CantineController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -99,6 +100,12 @@ Route::post('pcharge',[PchargeController::class,'store'])->name('pcharge.store')
 Route::get('pcharge/{rub}/{srub}',[PchargeController::class,'index']);
 Route::get('pcharge/create/{rub}/{srub}',[PchargeController::class,'create']);
 Route::get('pcharge/{id}/edit/{rub}/{srub}',[PchargeController::class,'edit']);
+
+Route::resource('state',StateControler::class);
+Route::post('state',[StateControler::class,'store'])->name('state.store');
+Route::get('state/{rub}/{srub}',[StateControler::class,'index']);
+Route::get('state/create/{rub}/{srub}',[StateControler::class,'create']);
+Route::get('state/{id}/edit/{rub}/{srub}',[StateControler::class,'edit']);
 
 
 Route::resource('classe',ClasseController::class);
