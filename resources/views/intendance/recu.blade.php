@@ -44,7 +44,7 @@
 
 .cycle, .niveau, .classe {
     margin-right:0;
-    width: 33%;
+    width: 50%;
     display: flex;                /* Active le mode flex */
     justify-content: center;     /* Centre horizontalement */
     align-items: center;         /* Centre verticalement */

@@ -44,7 +44,7 @@
 
 .cycle, .niveau, .classe {
     margin-right:0;
-    width: 33%;
+    width: 50%;
     display: flex;                /* Active le mode flex */
     justify-content: center;     /* Centre horizontalement */
     align-items: center;         /* Centre verticalement */
@@ -95,9 +95,7 @@
             <h5 class="text-center" > NOM DE L ETABLISEMENT </h5>
     </div>
     <div class="infosniveau">
-         <div class="cycle">
-         <img src="{{ $reglement->eleve->Photo }}" style="width: 100%; height: 100%; border-radius:10%;"   alt="Photo de l'élève">
-         </div>
+         
          <div class="niveau">
             <div class="mr-2">
             <p><strong >Matricule de l élève :</strong> </p>

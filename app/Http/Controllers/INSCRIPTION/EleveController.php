@@ -183,6 +183,7 @@ class EleveController extends Controller
     public function edit(string $id,$rub, $srub)
     {
         $annee = session('annee');
+        $annee=session('annee');
         $pcharges=Pcharge::all();
         $classes=Classe::where('Annee','=', $annee)->get();
         $cycles= Cycle::all();
@@ -191,7 +192,6 @@ class EleveController extends Controller
         $eleve->acte_naissance = !empty($eleve->acte_naissance) ? asset('storage/' . $eleve->acte_naissance) : '';
         $eleve->billetin = !empty($eleve-> billetin ) ? asset('storage/' . $eleve->billetin ) : '';
         $eleve->Photo = !empty($eleve->Photo) ? asset('storage/' . $eleve->Photo) : '';
-        $annee=session('annee');
         $totalInscriptions = DB::table('inscriptions')
         ->where('idanneescolaire', $annee)
         ->where('Matricule', $id)->first();
