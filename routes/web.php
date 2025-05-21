@@ -16,6 +16,7 @@ use App\Http\Controllers\Params\PchargeController;
 use App\Http\Controllers\Reglement\ScolariteController;
 use App\Http\Controllers\Reglement\IntendanceController;
 use App\Http\Controllers\Reglement\CantineController;
+use App\Http\Controllers\BVERSEMENT\VbanqueController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 /*
@@ -93,6 +94,13 @@ Route::resource('banque',BanqueController::class);
 Route::get('banque/{rub}/{srub}',[BanqueController::class,'index']);
 Route::get('banque/create/{rub}/{srub}',[BanqueController::class,'create']);
 Route::get('banque/{id}/edit/{rub}/{srub}',[BanqueController::class,'edit']);
+
+Route::resource('bversement',VbanqueController::class);
+Route::get('bversement/{rub}/{srub}',[VbanqueController::class,'index']);
+Route::get('bversement/create/{rub}/{srub}',[VbanqueController::class,'create']);
+Route::get('bversement/{id}/edit/{rub}/{srub}',[VbanqueController::class,'edit']);
+Route::get('/bversement/{rub}/{srub}/bilan', [VbanqueController::class, 'bverserment'])->name('bversement.bilan');
+
 
 Route::resource('pcharge',PchargeController::class);
 Route::post('pcharge',[PchargeController::class,'store'])->name('pcharge.store');

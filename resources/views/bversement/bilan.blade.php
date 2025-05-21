@@ -80,8 +80,8 @@
 </style>
 
 @section('content')
-<div class="container mt-4 recu-container" id="recu-container"  style="visibility: hidden;">
-    <h4 class="text-center">REÇU DE PAIEMENT</h4>
+<div class="container mt-4 recu-container" id="bilan-container">
+    <h4 class="text-center">Bilan versement</h4>
     <hr>
     <div class="logos" id="logos">
         <div class="logo1">
@@ -94,81 +94,47 @@
     <div class="etablissement mt-2 mb-2">
             <h5 class="text-center" > NOM DE L ETABLISEMENT </h5>
     </div>
-    <div class="infosniveau">
-         <div class="cycle">
-         <img src="{{ $reglement->eleve->Photo }}" style="width: 100%; height: 100%; border-radius:10%;"   alt="Photo de l'élève">
-         </div>
-         <div class="niveau">
-            <div class="mr-2">
-            <p><strong >Matricule de l élève :</strong> </p>
-            <p><strong >Nom  de l élève :</strong> </p>
-            <p><strong >Classe :</strong></p>
-            <p><strong >Année scolaire :</strong></p>
-            </div>
-            <div>
-            <p> {{ $reglement->eleve->Matricule }}</p>
-            <p> {{ $reglement->eleve->Nom }} {{ $reglement->eleve->Prenom }}</p>
-            <p>{{ $classe->libelleclasse }}</p>
-            <p> {{ $reglement->annee }}</p>
-            </div>
-        </div>
-         <div class="classe">
-            <div class="mr-3">
-         <p><strong>Banque :</strong></p>
-         <p><strong>Montant payé :</strong> </p>
-         <p><strong>Date :</strong> </p>
-            </div>
-            <div>
-         <p> {{ $reglement->banque->libellebanque }}</p>
-         <p>{{ number_format($reglement->montant, 0, ',', ' ') }} FCFA</p>
-         <p>{{ $reglement->created_at->isoFormat('LL') }}</p>
-            </div>
-         </div>
-    </div>
-    <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" >PAYEMENT ULTERIEUR </h5>
-    </div>
-    <div class="tableau">
-            <table>
-            <thead>
+    <div class="container-fluid">
+    <div class="main-card card">
+        
+   	 <div class="card-body table-responsive">
+     	   <table id="example" class="table table-striped table-bordered table-hover ">
+        
+       	     <thead >
                 <tr>
-                    <th>Date</th>
-                    <th>Montant</th>
-                    <th>Banque</th>
+                    <th>{{__('Matricule')}} </th>
+                   <th>{{__('Nom ')}} </th>
+                   <th>{{__('Prenom(s) ')}} </th>
+                   <th>{{__('Montant ')}} </th>
+                   <th>{{__('Date Règlement ')}} </th>
+
+
+
+                
                 </tr>
             </thead>
+            
             <tbody>
-                @forelse($autresReglements as $autre)
+                @foreach($bversement as $item)
                     <tr>
-                        <td>{{ $autre->created_at->isoFormat('LL') }}</td>
-                        <td>{{ number_format($autre->montant, 0, ',', ' ') }} FCFA</td>
-                        <td>{{ $autre->banque->libellebanque ?? 'N/A' }}</td>
+                        <td>{{$item->id_eleve}}</td>
+                        <td>{{$item->eleve->Nom}}</td>
+                        <td>{{$item->eleve->Prenom}}</td>
+                        <td>{{$item->montant}}</td>
+                        <td>{{$item->created_at}}</td>  
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="3" style="text-align: center;">Aucun autre règlement trouvé</td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
+    	</div>
+    </div>
 
-            <p style="text-align: right;"> <em> <strong> total payer :</strong>{{ $montantTotalAutres}}  FCFA</em> </p>
-            <p style="text-align: right;"> <em> <strong> reste a payer :</strong>{{ $rest}}  FCFA</em> </p>
-        </div>
-        <div class="signature" >
-            <div>
-                <p > <strong>Caissier (caissiere)</strong></p>
-            </div>
-            <div>
-            <em>Ouagadougou le {{now()->isoFormat('LL')}}</em>
-            </div>
-        </div>
 </div>
-    <script>
+<script>
     window.onload = function () {
     setTimeout(function () {
-        const recu = document.getElementById("recu-container");
-        if (!recu) return;
+        const bilan = document.getElementById("bilan-container");
+        if (!bilan) return;
 
         const styles = [...document.querySelectorAll('link[rel="stylesheet"], style')]
             .map(tag => tag.outerHTML)
@@ -188,7 +154,7 @@
                     </style>
                 </head>
                 <body>
-                    ${recu.outerHTML}
+                    ${bilan.outerHTML}
                 </body>
             </html>
         `);
@@ -203,10 +169,9 @@
         setTimeout(function() {
             printWindow.close();
             // Redirection après un délai (environ 2 secondes après l'impression)
-            window.location.href = "{{ url('Scolarite/' . $rub . '/' . $srub) }}";
+            window.location.href = "{{ url('bversement/' . $rub . '/' . $srub) }}";
         }, 2000); // Tu peux ajuster le délai si nécessaire
     }, 1000);
 };
-
 </script>
 @endsection 

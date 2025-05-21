@@ -182,6 +182,7 @@ class EleveController extends Controller
      */
     public function edit(string $id,$rub, $srub)
     {
+        $annee = session('annee');
         $pcharges=Pcharge::all();
         $classes=Classe::where('Annee','=', $annee)->get();
         $cycles= Cycle::all();

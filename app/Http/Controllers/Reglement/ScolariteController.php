@@ -8,6 +8,7 @@ use App\Models\Classe;
 use App\Models\Reglement;
 use App\Models\Eleve;
 use Illuminate\Support\Facades\DB;
+use NumberToWords\NumberToWords;
 
 
 
@@ -16,7 +17,7 @@ class ScolariteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, $rub, $srub)
+   public function index(Request $request, $rub, $srub)
     {
         $annee = session('annee'); // année scolaire en cours stockée en session
     
@@ -65,8 +66,8 @@ class ScolariteController extends Controller
     
         // Chargement des données de filtres
         $cycles = DB::table('cycles')->get();
-        $niveaux = DB::table('niveaux')->get();
-        $classes = DB::table('classes')->get();
+        $niveaux = DB::table('niveaux')->where('annee','=',$annee)->get();
+        $classes = DB::table('classes')->where('Annee','=',$annee)->get();
     
         return view('Scolarite.index', [
             'eleves' => $eleves,

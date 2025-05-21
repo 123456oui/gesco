@@ -95,37 +95,48 @@
             <h5 class="text-center" > NOM DE L ETABLISEMENT </h5>
     </div>
     <div class="infosniveau">
-         <div class="cycle">
-         <img src="{{ $reglement->eleve->Photo }}" style="width: 100%; height: 100%; border-radius:10%;"   alt="Photo de l'élève">
-         </div>
+        
          <div class="niveau">
             <div class="mr-2">
-            <p><strong >Matricule de l élève :</strong> </p>
-            <p><strong >Nom  de l élève :</strong> </p>
-            <p><strong >Classe :</strong></p>
-            <p><strong >Année scolaire :</strong></p>
+                    <p>Monsieur/Madame  </p>
+                    <p>En classe    </p>
+                    <p>A Verser la somme de  </p>
+                    
+                    <p>Pour l'année accadémique  </p>
+          
             </div>
             <div>
-            <p> {{ $reglement->eleve->Matricule }}</p>
-            <p> {{ $reglement->eleve->Nom }} {{ $reglement->eleve->Prenom }}</p>
-            <p>{{ $classe->libelleclasse }}</p>
-            <p> {{ $reglement->annee }}</p>
+            
             </div>
         </div>
          <div class="classe">
-            <div class="mr-3">
-         <p><strong>Banque :</strong></p>
-         <p><strong>Montant payé :</strong> </p>
-         <p><strong>Date :</strong> </p>
-            </div>
+          
+             <div>
+                <p><strong > {{ $reglement->eleve->Nom }} {{ $reglement->eleve->Prenom }} </strong> </p>
+                <p> de  </p>
+                <p><strong > {{$lettres}}  {{ $reglement->eleve->montant  }}  </strong> </p>
+                 
+                <p><strong >  {{ $reglement->annee  }} </strong> </p>
+
+             </div>
             <div>
-         <p> {{ $reglement->banque->libellebanque }}</p>
-         <p>{{ number_format($reglement->montant, 0, ',', ' ') }} FCFA</p>
-         <p>{{ $reglement->created_at->isoFormat('LL') }}</p>
+             
             </div>
          </div>
+        <div class="niveau">
+             <div>
+                  <p>  Matricule  {{ $reglement->eleve->Matricule}} </p>
+                  <p> <strong >  {{ $classe->libelleclasse }}   </strong></p>
+                  <P><strong >{{ $reglement->montant  }} </strong> CFA </P>
+                  <p>à la banque  {{ $reglement->banque->libellebanque }}</p>
+             </div>
+
+        </div>
+        
     </div>
     <div class="etablissement mt-2 mb-2">
+         <p style="text-align: right;"> <em> <strong> total payer :</strong>{{ $montantTotalAutres}}  FCFA</em> </p>
+         <p style="text-align: right;"> <em> <strong> reste a payer :</strong>{{ $rest}}  FCFA</em> </p>
             <h5 class="text-center" >PAYEMENT ULTERIEUR </h5>
     </div>
     <div class="tableau">
@@ -152,8 +163,7 @@
             </tbody>
         </table>
 
-            <p style="text-align: right;"> <em> <strong> total payer :</strong>{{ $montantTotalAutres}}  FCFA</em> </p>
-            <p style="text-align: right;"> <em> <strong> reste a payer :</strong>{{ $rest}}  FCFA</em> </p>
+           
         </div>
         <div class="signature" >
             <div>

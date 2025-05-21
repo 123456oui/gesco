@@ -8,7 +8,7 @@ use App\Models\Classe;
 use App\Models\Reglement;
 use App\Models\Eleve;
 use Illuminate\Support\Facades\DB;
-
+use NumberToWords\NumberToWords;
 
 
 class IntendanceController  extends Controller
@@ -16,6 +16,14 @@ class IntendanceController  extends Controller
     /**
      * Display a listing of the resource.
      */
+      public function afficher(  $nombre)
+    {
+        $numberToWords = new NumberToWords();
+        $transformer = $numberToWords->getNumberTransformer('fr');
+        $lettres = $transformer->toWords($nombre);
+
+        return $lettres;
+    }
     public function index($rub, $srub)
     {
     $annee = session('annee');
@@ -113,8 +121,9 @@ class IntendanceController  extends Controller
     ->with('eleve', 'banque')
     ->get();
     $montantTotalAutres = $autresReglements->sum('montant')+$reglement->montant ;
+    $lettres=$this->afficher($reglement->montant);
     $rest=$inscription->montantscolariteE - $montantTotalAutres;
-    return view('intendance.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest' ));
+    return view('intendance.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest','lettres' ));
 }
 
 }
