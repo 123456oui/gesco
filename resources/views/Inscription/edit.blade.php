@@ -34,16 +34,16 @@
                         <div class="row">
                             <!-- Fieldset principal à gauche (50%) -->
                             <div class="col-md-6">
-                                <fieldset class=" p-4 mb-3 h-auto mt-3">
+                                <fieldset class=" p-4 mb-3 h-auto mt-3 ">
                                     <legend class="w-auto px-2">Informations générales de l eleve</legend>
                                     <!-- Ajoutez vos champs ici -->
                                      <!-- Affichage + sélection de l'image -->
-                                     <div class="mb-3 text-center">
+                                     <div class="mb-3 d-flex flex-column align-items-center justify-content-center text-center" >
                                         <img id="logo-preview" 
                                             src="{{ $eleve->Photo }}" 
                                             alt="Photo élève" 
                                             class="img-thumbnail" 
-                                            style="max-width: 200px; height: 200px; border-radius: 50%; display: block;">
+                                            style="width :200px; max-width: 200px; height: 200px; border-radius: 50%; display: block;">
                                             
                                         <input type="hidden" name="photo_actuelle" value="{{ $eleve->Photo }}">
                                         

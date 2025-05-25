@@ -136,4 +136,35 @@ class StateControler extends Controller
     {
         //
     }
+
+
+    public function analyseImpression(Request $request)
+{
+    $matricules = $request->input('eleves', []);
+    $a_jour = [];
+    $non_a_jour = [];
+    $annee=session('annee');
+    foreach ($matricules as $matricule) {
+        $eleve = Eleve::where('Matricule', $matricule)->first();
+        $totalInscriptions = DB::table('inscriptions')
+        ->where('idanneescolaire', $annee)
+        ->where('Matricule', $matricule)->first()->montantscolariteE;
+        $reglements = Reglement::where('id_eleve', $matricule)
+            ->where('annee', $annee)
+            ->get()->sum('montant');
+        if (!$eleve) continue;
+
+        // Supposons que tu as une méthode ou un champ pour vérifier la scolarité
+        if ($reglements>=$totalInscriptions) {
+            $a_jour[] = $eleve;
+        } else {
+            $non_a_jour[] = $eleve;
+        }
+    }
+
+   return redirect()->back()->with([
+        'a_jour' => $a_jour,
+        'non_a_jour' => $non_a_jour,
+    ]);
+}
 }

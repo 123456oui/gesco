@@ -80,7 +80,7 @@
 </style>
 
 @section('content')
-<div class="container mt-4 recu-container" id="recu-container"  style="visibility: hidden;">
+<div class="container mt-4 recu-container" id="recu-container" >
     <h4 class="text-center">REÇU DE PAIEMENT</h4>
     <hr>
     <div class="logos" id="logos">
@@ -202,7 +202,7 @@
             printWindow.close();
             // Redirection après un délai (environ 2 secondes après l'impression)
             window.location.href = "{{ url('Scolarite/' . $rub . '/' . $srub) }}";
-        }, 2000); // Tu peux ajuster le délai si nécessaire
+        }, 5000); // Tu peux ajuster le délai si nécessaire
     }, 1000);
 };
 

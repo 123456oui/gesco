@@ -114,7 +114,7 @@ Route::post('state',[StateControler::class,'store'])->name('state.store');
 Route::get('state/{rub}/{srub}',[StateControler::class,'index']);
 Route::get('state/create/{rub}/{srub}',[StateControler::class,'create']);
 Route::get('state/{id}/edit/{rub}/{srub}',[StateControler::class,'edit']);
-
+Route::post('/state/impression/analyse', [StateControler::class, 'analyseImpression'])->name('state.impression.analyse');
 
 Route::resource('classe',ClasseController::class);
 Route::post('classe',[ClasseController::class,'store'])->name('classe.store');
@@ -138,7 +138,7 @@ Route::post('cantine',[CantineController::class,'store'])->name('cantine.store')
 Route::get('cantine/{rub}/{srub}',[CantineController::class,'index']);
 Route::get('cantine/create/{rub}/{srub}',[CantineController::class,'create']);
 Route::get('cantine/{id}/edit/{rub}/{srub}',[CantineController::class,'edit']);
-
+Route::get('cantine/recu/{matricule}/{rub}/{srub}', [CantineController::class, 'recu'])->name('cantine.recu');
 
 Route::resource('user',UserController::class);
 Route::get('user/{rub}/{srub}',[UserController::class,'index']);
@@ -152,6 +152,9 @@ require __DIR__.'/auth.php';
 Route::post('/set-annee-session', function (Request $request) {
     $annee = $request->input('annee'); // Correct !
     session(['annee' => $request->annee]);
+    $cantinesome= DB::table('cantineannes')->where('annee', $annee)->first();
+    $montant= $cantinesome->montant_mois;
+    session(['cantinesome' => $montant]);
     return response()->json(['message' => 'Année enregistrée', 'annee' => session('annee')]);
 });
 Route::get('/matricule/{niveau_id}', [EleveController::class, 'matricule']);

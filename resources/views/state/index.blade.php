@@ -1,6 +1,7 @@
 @extends('layouts.template')
 
 @section('content')
+
 <div class="container-fluid">
 <div class="d-flex justify-content-center">
     <div class="w-100 mb-4 px-5">
@@ -40,12 +41,14 @@
         </form>
         </div>
     </div>
-    <div class="main-card card">
-        <div class="card-header py-0 d-flex align-items-center">
-            <h4 class="mb-0 flex-grow-1">{{ __('Liste des eleves') }}</h4>
-            <button id="imprimerBtn" class="btn btn-success" disabled>
-                <i class="fas fa-print me-2"></i> Imprimer
-            </button>
+    <form id="imprimerForm" method="POST" action="{{ route('state.impression.analyse') }}">
+        @csrf
+        <div class="main-card card">
+            <div class="card-header py-0 d-flex align-items-center">
+                <h4 class="mb-0 flex-grow-1">{{ __('Liste des eleves') }}</h4>
+                <button type="submit" id="imprimerBtn" class="btn btn-success" disabled>
+                    <i class="fas fa-print me-2"></i> Imprimer
+                </button>
         </div>
     <div class="card-body table-responsive">
         <table id="example" class="table table-striped table-bordered table-hover dataTable">
@@ -87,13 +90,131 @@
         </table>
     </div>
 </div>
+</form>
 <br>
     {{-- <a href="/exportExcelCause" >
         <button class="btn btn-primary btnEnregistrer">{{ __('liste.exporter') }}</button>
     </a> --}}
 </div>
+@if(session('a_jour') || session('non_a_jour'))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let html = '';
+    @if(session('a_jour'))
+        html += `
+            <div style="text-align:left; margin-bottom:20px;">
+                <div style="font-size:18px; color:#198754; font-weight:bold; margin-bottom:8px;">
+                    ✅ Élèves à jour
+                </div>
+                <ul style="list-style: none; padding-left:0;">
+                    @foreach(session('a_jour') as $eleve)
+                        <li style="margin-bottom:5px; padding:6px 12px; background:#e9fbe7; border-radius:8px;">
+                            <span style="font-weight:bold;">{{ $eleve->Nom }} {{ $eleve->Prenom }}</span>
+                            <span style="color:#888;"> Matricule :  ({{ $eleve->Matricule }})</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        `;
+    @endif
+    @if(session('non_a_jour'))
+        html += `
+            <div style="text-align:left;">
+                <div style="font-size:18px; color:#dc3545; font-weight:bold; margin-bottom:8px;">
+                    ❌ Élèves non à jour
+                </div>
+                <ul style="list-style: none; padding-left:0;">
+                    @foreach(session('non_a_jour') as $eleve)
+                        <li style="margin-bottom:5px; padding:6px 12px; background:#fdeaea; border-radius:8px;">
+                            <span style="font-weight:bold;">{{ $eleve->Nom }} {{ $eleve->Prenom }}</span>
+                            <span style="color:#888;"> Matricule : ({{ $eleve->Matricule }})</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        `;
+    @endif
 
- 
+    Swal.fire({
+        icon: 'info',
+        title: '<span style="font-size:22px;">Résultat de l\'analyse</span>',
+        html: html,
+        showConfirmButton: true,
+        confirmButtonText: '<i class="fas fa-print"></i> Imprimer les à jour',
+        width: 650,
+        customClass: {
+            popup: 'shadow-lg rounded-4'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let urls = [
+                @foreach(session('a_jour') as $eleve)
+                    "{{ route('state.edit', ['state' => $eleve->Matricule, 'rub' => $rub, 'srub' => $srub]) }}",
+                @endforeach
+            ];
+
+            function openAndPrintSequentially(urls, index = 0) {
+                if (index >= urls.length) {
+                    window.location.href = "{{ url('state/' . $rub . '/' . $srub) }}";
+                    return;
+                }
+
+                let win = window.open(urls[index], '_blank');
+
+                let timer = setInterval(function () {
+                    if (win && win.document && win.document.readyState === 'complete') {
+                        clearInterval(timer);
+
+                        // Extraire le contenu du #carte-section
+                        let carte = win.document.getElementById('carte-section');
+                        if (!carte) {
+                            // Si carte-section introuvable, imprimer toute la page
+                            win.print();
+                            win.close();
+                            openAndPrintSequentially(urls, index + 1);
+                            return;
+                        }
+
+                        let content = carte.outerHTML;
+
+                        // Réécriture du contenu de la page avec uniquement le div
+                        win.document.body.innerHTML = `
+                            <html>
+                                <head> 
+                                    <style>
+                                        @media print {
+                                            body {
+                                            margin-top:100px;
+                                                background: white;
+                                            }
+                                        }
+                                    </style>
+                                </head>
+                                <body>${content}</body>
+                            </html>
+                        `;
+                        win.document.close();
+
+                        // Lancer impression et continuer
+                        setTimeout(function () {
+                            win.focus();
+                            win.print();
+                            win.close();
+                            openAndPrintSequentially(urls, index + 1);
+                        }, 1000);
+                    }
+                }, 700);
+            }
+
+            if (urls.length > 0) {
+                openAndPrintSequentially(urls);
+            }
+        }
+    });
+});
+</script>
+@endif
+
 <script>
 function onCycleChange(idCycle) {
     const niveauSelect = document.querySelector('select[name="niveau"]');

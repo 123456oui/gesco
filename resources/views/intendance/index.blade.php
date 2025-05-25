@@ -192,7 +192,7 @@
 
 
 @push('scripts')
-@if(session('success'))
+@if(session('cantines_ajoutees'))
 <script>
     Swal.fire({
         icon: 'success',

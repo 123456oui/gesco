@@ -17,7 +17,7 @@
     </div>
 
     {{-- ✅ Partie 2 : Carte scolaire --}}
-    <div class="mb-4  shadow-sm  w-50 mx-auto px-3 py-1" id="carte-section"  style="background-color:rgba(208, 254, 241, 0.98); ">
+    <div class="mb-4  shadow-sm  w-50 mx-auto px-3 py-1" id="carte-section"  style="background-color:rgba(241, 127, 51, 0.9); ">
         <div class="card-body d-flex flex-column justify-content-between  w-100 h-40"  style="background-color:white;">
 
             {{-- ✅ En-tête --}}
@@ -34,6 +34,7 @@
                     <small class="d-block fst-italic">Unité - Progrès - Justice</small>
                     <h5 class="mt-1 mb-0">Lycée de l’Avenir</h5>
                     <strong class="d-block mt-1">Carte Scolaire</strong>
+                    <small class="d-block fst-italic">{{ session('annee') }}</small>
                 </div>
 
                 {{-- ✅ Image droite (collée à droite) --}}
@@ -45,40 +46,62 @@
 
 
             {{-- ✅ Corps : 3 parties alignées horizontalement --}}
-            <div class="d-flex justify-content-between text-center py-4 flex-grow-1">
+            <div class="d-flex justify-content-between border-bottom align-items-center py-2">
 
-                {{-- Partie gauche --}}
-                <div class="w-33">
-                    <p><strong>Nom :</strong></p>
-                    <p>{{ $eleve->Nom ?? '...' }}</p>
+                {{-- Partie gauche : image avec largeur ajustée à son contenu --}}
+                <div class="flex-shrink-0 me-1 text-center">
+                    <img src="{{ $eleve->Photo ?? asset('images/default-avatar.png') }}" 
+                        alt="Photo élève" 
+                        class="img-thumbnail mb-1"
+                        style="width: 100px; height: 100px; border-radius: 0%; object-fit: cover;">
+
+                    <p class="mb-0"><strong> <small >{{ $eleve->Matricule ?? '...' }} </small></strong></p>
                 </div>
-
                 {{-- Partie centre --}}
-                <div class="w-33">
-                    <p><strong>Matricule :</strong></p>
-                    <p>{{ $eleve->Matricule ?? '...' }}</p>
+                <div class="w-50 text-start px-3">
+                    <p class="mb-1"><strong>Nom     </strong></p>
+                    <p class="mb-1"><strong>Prenom  </strong></p>
+                    <p class="mb-1"><strong>Date De Naissance </strong></p>
+                    <p class="mb-1"><strong>Lieu De Naissance </strong></p>
+
                 </div>
 
                 {{-- Partie droite --}}
-                <div class="w-33">
-                    <p><strong>Classe :</strong></p>
-                    <p>{{ $eleve->Classe ?? '...' }}</p>
+                <div class="w-50 text-start">
+                     <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->Nom }}   </p>
+                    <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->Prenom }}   </p>
+                    <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->datenais}}   </p>
+                    <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->lieunais }}   </p>
+                </div>
+                
+            </div>
+
+
+            {{-- ✅ Pied de carte --}}
+            <div class="d-flex justify-content-between mt-2 pt-1" style="background-color:rgba(229, 252, 250, 0.73);">
+                {{-- Partie gauche --}}
+                <div class="text-start">
+                    <small> <strong>Personnes a prevenir en cas de besoin:  </strong></small> <br>
+                    <small>{{$eleve->Nomp}} ou {{$eleve->Nomm}} </small><br>
+                    <small>{{$eleve->NumtelP}} ou {{$eleve->NumtelM}} </small>
+                </div>
+
+                {{-- Partie droite --}}
+                <div class="text-end">
+                    <small> <strong>Lycée de l’Avenir </strong></small> <br>
+                    <small>Debout pour changer, unis pour vaincre !</small>
                 </div>
             </div>
 
-            {{-- ✅ Pied de carte --}}
-            <div class="text-end border-top pt-2">
-                <small>Ouagadougou, le {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}</small>
-            </div>
 
         </div>
     </div>
 
 
     {{-- ✅ Partie 3 : Impression / Reçu --}}
-    <div id="impression-section">
+    <div id="impression-section " class="text-end">
         {{-- À compléter avec un bouton ou un aperçu imprimable --}}
-        <button class="btn btn-primary" @if($scolarite > $total) disabled @endif>
+        <button class="btn btn-primary" @if($scolarite > $total) disabled @endif onclick="imprimerCarte()">
             <i class="fas fa-print me-1"></i> Imprimer la carte scolaire
         </button>
     </div>
@@ -97,4 +120,48 @@
         }, 5000); // 60000 ms = 1 minute
     };
 </script>
+
+<script>
+function imprimerCarte() {
+    var printContents = document.getElementById('carte-section').outerHTML;
+
+    const styles = [...document.querySelectorAll('link[rel="stylesheet"], style')]
+        .map(style => style.outerHTML)
+        .join("\n");
+
+    var printWindow = window.open('', '', 'height=800,width=1000');
+    printWindow.document.open();
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title></title>
+                ${styles}
+                <style>
+                    body {
+                        background: white;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                ${printContents}
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+
+    setTimeout(function () {
+        printWindow.print();
+        printWindow.close();
+
+        // ✅ Redirection vers l'index après impression
+        window.location.href = "{{ url('state/' . $rub . '/' . $srub) }}";// ou une autre route selon ton besoin
+    }, 800);
+}
+</script>
+
+
+
 @endsection
