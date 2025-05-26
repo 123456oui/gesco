@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\INSCRIPTION\EleveController;
+use App\Http\Controllers\INSCRIPTION\EController;
 use App\Http\Controllers\Params\ProfilController;
 use App\Http\Controllers\Params\ActionController;
 use App\Http\Controllers\Params\MenuController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Reglement\ScolariteController;
 use App\Http\Controllers\Reglement\IntendanceController;
 use App\Http\Controllers\Reglement\StateControler;
 use App\Http\Controllers\Reglement\CantineController;
+use App\Http\Controllers\Reglement\AnnuelController;
 use App\Http\Controllers\BVERSEMENT\VbanqueController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -72,6 +74,12 @@ Route::get('Eleve/{rub}/{srub}',[EleveController::class,'index']);
 Route::get('Eleve/create/{rub}/{srub}',[EleveController::class,'create']);
 Route::get('Eleve/{id}/edit/{rub}/{srub}',[EleveController::class,'edit']);
 
+Route::resource('resinscipte',EController::class);
+Route::post('resinscipte/store/{rub}/{srub}',[EController::class,'store'])->name('resinscipte.store');
+Route::get('resinscipte/{rub}/{srub}',[EController::class,'index']);
+Route::get('resinscipte/create/{rub}/{srub}',[EController::class,'create']);
+Route::get('resinscipte/{id}/edit/{rub}/{srub}',[EController::class,'edit']);
+
 Route::resource('annee',AnneeController::class);
 Route::post('annee',[AnneeController::class,'store'])->name('annee.store');
 Route::get('annee/{rub}/{srub}',[AnneeController::class,'index']);
@@ -95,6 +103,9 @@ Route::resource('banque',BanqueController::class);
 Route::get('banque/{rub}/{srub}',[BanqueController::class,'index']);
 Route::get('banque/create/{rub}/{srub}',[BanqueController::class,'create']);
 Route::get('banque/{id}/edit/{rub}/{srub}',[BanqueController::class,'edit']);
+
+Route::resource('annuel',AnnuelController::class);
+Route::get('annuel/{rub}/{srub}',[AnnuelController::class,'index']);
 
 Route::resource('bversement',VbanqueController::class);
 Route::get('bversement/{rub}/{srub}',[VbanqueController::class,'index']);

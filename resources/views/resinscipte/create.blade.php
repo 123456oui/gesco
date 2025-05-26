@@ -363,20 +363,11 @@
         </div>
     </div>
 </div>
-@if(session('swal_message'))
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Attention',
-            text: @json(session('swal_message')),
-            confirmButtonColor: '#3085d6'
-        });
-    });
-</script>
+@if(session('js_alert'))
+    <script>
+        alert("{{ session('js_alert') }}");
+    </script>
 @endif
-
 
 @push('scripts')
 <script>

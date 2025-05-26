@@ -14,49 +14,28 @@ use Illuminate\Support\Facades\Storage;
 
 
 
-class EleveController extends Controller
+class EController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request, $rub, $srub)
     {
-        $annee = session('annee'); // tu peux stocker l'année scolaire en session
-    
-        $query = DB::table('eleves')
-            ->join('inscriptions', 'eleves.Matricule', '=', 'inscriptions.Matricule')
-            ->where('inscriptions.idanneescolaire', $annee);
-    
-        if ($request->filled('cycle')) {
-            $query->where('inscriptions.idcycle', $request->cycle);
-        }
-    
-        if ($request->filled('niveau')) {
-            $query->where('inscriptions.idniveau', $request->niveau);
-        }
-    
-        if ($request->filled('classe')) {
-            $query->where('inscriptions.idclasse', $request->classe);
-        }
-    
-        $eleves = $query->select('eleves.*')->orderBy('eleves.created_at', 'desc')->get();
-    
-        foreach ($eleves as &$eleve) {
-            $eleve->Photo = !empty($eleve->Photo) ? asset('storage/' . $eleve->Photo) : '';
-        }
-    
-        // Récupérer les listes pour les filtres
-        $cycles = DB::table('cycles')->get();
-        $niveaux = DB::table('niveaux')->where('annee','=',$annee)->get();
-        $classes = DB::table('classes')->where('Annee','=',$annee)->get();
-        return view('Inscription.index', [
+        $annee = session('annee');
+        $classes = Classe::where('Annee', $annee)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $eleves = Eleve::all();
+
+            foreach ($eleves as $eleve) {
+                $eleve->Photo = !empty($eleve->Photo) ? asset('storage/' . $eleve->Photo) : '';
+            }        
+        return view('resinscipte.index', [
             'eleves' => $eleves,
+            'classes' => $classes,
             'rub' => $rub,
             'srub' => $srub,
             'controler' => $this, // ici tu passes le contrôleur
-            'cycles' => $cycles,
-            'niveaux' => $niveaux,
-            'classes' => $classes,
         ]);
          }
     
@@ -82,93 +61,101 @@ class EleveController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'Etaorigine' => 'nullable',
-            'numactenais' => 'required|string|max:255',
-            'cycle' => 'required|integer',
-            'niveau' => 'required|integer',
-            'classe' => 'required|integer',
-            'matriculeE' => 'required|string|max:255',
-            'nomE' => 'required|string|max:255',
-            'prenomE' => 'required|string|max:255',
-            'datenaisE' => 'required|date',
-            'lieunaisE' => 'required|string|max:255',
-            'nomPE' => 'required|string|max:255',
-            'nomME' => 'required|string|max:255',
-            'numtelPE' => 'nullable|string|max:20',
-            'numtelME' => 'nullable|string|max:20',
-            'sante' => 'required|string',
-            'typeSubvention' => 'nullable|integer',
-            'commentaireSubvention' => 'nullable|string',
-            'logo' => 'required|mimes:jpeg,png,jpg,gif|max:2048',
-            'acte_naissance' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'photo_identite' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ]);
-        $classe=$request->input('niveau');
+
         $annee = session('annee');
-        $userid= session('user')->id;
-        $niveau = Niveau::where('id', $classe)
-                ->where('annee', $annee)
-                ->first();
-        $scobrute=$niveau->Montantscolarite;
-        if ($request->filled('commentaireSubvention')) {
-            $subString = $request->input('commentaireSubvention');
-            $sub = preg_replace('/[^0-9,.]/', '', $subString);
-            $sub = str_replace(',', '.', $sub);
-            $sub = floatval($sub);
-            $sco=$scobrute-$sub;
-        }else{
-            $sco=$scobrute;
+        $matricule = $request->input('Matricule');
+        $class = $request->input('classe');
+        $classe=DB::table('classes')
+            ->where('id', $class)->first();
+        $niveau =DB::table('niveaux')
+            ->where('id', $classe->idniveau)
+            ->first();
+        $cycle = DB::table('cycles')
+            ->where('id', $niveau->idcycle)
+            ->first();
+         $inscriptions = DB::table('vue_inscription_reglements')
+        ->where('matricule', $matricule) // inclure ou non selon ton besoin
+        ->get();
+
+        $inscription = DB::table('inscriptions')
+        ->where('matricule', $matricule)
+        ->where('idanneescolaire', $annee)
+        ->first();
+        if ($inscription) {
+            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ Cet élève est déjà inscrit pour l'année scolaire en cours.</div>";
+            return redirect()->back()->with('swal', $message);
+        }
+        if ($inscriptions->isNotEmpty()) {
+            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ Cet élève est a un retard de scolarite  pour au moins une  année. Détails :</div>";
+
+            foreach ($inscriptions as $i) {
+                $classe = DB::table('classes')
+                    ->where('id', $i->idclasse)
+                    ->first();
+                $reste = $i->montantscolariteE - $i->montant_total;
+
+                $message .= "
+                    <div style='
+                        background: #f9f6f2;
+                        border: 1px solid #e67e22;
+                        border-radius: 10px;
+                        margin-bottom: 12px;
+                        padding: 15px 18px;
+                        box-shadow: 0 2px 8px rgba(230, 126, 34, 0.07);
+                    '>
+                        <div style='font-weight:bold; color:#2980b9; margin-bottom:6px;'>Classe : {$classe->libelleclasse}</div>
+                        <div><span style='font-weight:bold;'>Année :</span> {$i->idanneescolaire}</div>
+                        <div><span style='font-weight:bold;'>Montant de la scolarité :</span> <span style='color:#16a085;'>{$i->montantscolariteE} FCFA</span></div>
+                        <div><span style='font-weight:bold;'>Montant versé :</span> <span style='color:#27ae60;'>{$i->montant_total} FCFA</span></div>
+                        <div><span style='font-weight:bold;'>Reste à verser :</span> <span style='color:#c0392b;'>{$reste} FCFA</span></div>
+                    </div>
+                ";
+            }
+            return redirect()->back()->with('swal_message', $message);
         }
         
-        $matricule=$request->input('numactenais');
-        $eleve = Eleve::where('numbactnaiss', $matricule)->first();
-        if($eleve){
-            return redirect()->back()
-           ->with('swal_message', "Un élève avec ce matricule existe déjà. Veuillez passer à la réinscription.");
-        }
-        else{
-            $neweleve = new Eleve();
-            //$eleve->etaorigine_id = $request->Etaorigine;
-            $neweleve->numbactnaiss = $request->numactenais;
-            $neweleve->matricule = $request->matriculeE;
-            $neweleve->Nom = $request->nomE;
-            $neweleve->Prenom = $request->prenomE;
-            $neweleve->datenais = $request->datenaisE;
-            $neweleve->lieunais = $request->lieunaisE;
-            $neweleve->Nomp = $request->nomPE;
-            $neweleve->Nomm = $request->nomME;
-            $neweleve->NumtelP = $request->numtelPE;
-            $neweleve->NumtelM = $request->numtelME;
-            $neweleve->Sante = $request->sante;
-            if ($request->hasFile('logo')) {
-                $path = $request->file('logo')->store('eleves', 'public');
-                $neweleve->photo = $path; // Stocke juste le chemin relatif
-            }
-            if ($request->hasFile('acte_naissance')) {
-                $neweleve->acte_naissance = $request->file('acte_naissance')->store('eleves', 'public');
-            }
-            if ($request->hasFile('photo_identite')) {
-                $neweleve->billetin = $request->file('photo_identite')->store('eleves', 'public');
-            }
-            
-            $neweleve->save();
-            DB::table('inscriptions')->insert([
-                'Matricule' => $neweleve->matricule,
-                'idcycle' => $request->cycle,
-                'idniveau' => $request->niveau,
-                'idclasse' => $request->classe,
-                'idanneescolaire' => $annee,
-                'montantscolariteE' => $sco,
-                'idpcharge' =>$request->typeSubvention,// Remplacer par la vraie valeur (parent à charge lié à l’élève)
-                'iduser' => $userid,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            return redirect('Eleve/'.$request->input('rub').'/'.$request->input('srub'));
-        }
-    }
+        $inscriptionactuelle = DB::table('inscriptions')
+        ->where('matricule', $matricule)
+        ->orderBy('created_at', 'desc')
+        ->first();
+        if ($inscriptionactuelle) {
+            // Préparer les données pour la nouvelle inscription
+            $nouvelleInscription = [
+                'Matricule'        => $inscriptionactuelle->Matricule,
+                'idanneescolaire'  => $annee,
+                'idclasse'         => $class,
+                'idcycle'          => $cycle->id,
+                'idniveau'         => $niveau->id,
+                'montantscolariteE'=> $inscriptionactuelle->montantscolariteE, // ou recalculer si besoin
+                'idpcharge'        => $inscriptionactuelle->idpcharge,
+                'iduser'           => session('user')->id ?? null,
+            ];
 
+            // Insérer la nouvelle inscription
+            DB::table('inscriptions')->insert($nouvelleInscription);
+
+            $editUrl = url('Eleve/' . $inscriptionactuelle->Matricule . '/edit/' . $request->input('rub') . '/' . $request->input('srub'));
+            $message = "
+                <div style='background:#f9f6f2; border:1px solid #27ae60; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(39, 174, 96, 0.07); margin-bottom:10px;'>
+                    <div style='font-size:20px; color:#27ae60; font-weight:bold; margin-bottom:10px;'>
+                        ✅ Nouvelle inscription enregistrée avec succès !
+                    </div>
+                    <div style='margin-bottom:8px;'><span style='font-weight:bold;'>Matricule :</span> {$nouvelleInscription['Matricule']}</div>
+                    <div style='margin-bottom:8px;'><span style='font-weight:bold;'>Année scolaire :</span> {$nouvelleInscription['idanneescolaire']}</div>
+                    <div style='margin-bottom:8px;'><span style='font-weight:bold;'>Classe :</span> {$classe->libelleclasse}</div>
+                    <div style='margin-bottom:8px;'><span style='font-weight:bold;'>Cycle :</span> {$cycle->libellecycle}</div>
+                    <div style='margin-bottom:8px;'><span style='font-weight:bold;'>Niveau :</span> {$niveau->libelleniveau}</div>
+                    <div style='margin-bottom:8px;'><span style='font-weight:bold;'>Montant scolarité :</span> <span style='color:#16a085;'>{$nouvelleInscription['montantscolariteE']} FCFA</span></div>
+                    <div style='text-align:center; margin-top:18px;'>
+                        <a href='{$editUrl}' style='display:inline-block; padding:10px 22px; background:#2980b9; color:#fff; border-radius:6px; text-decoration:none; font-weight:bold;'>
+                            Modifier cette inscription
+                        </a>
+                    </div>
+                </div>
+            ";
+            return redirect()->back()->with('successs', $message);
+    }
+    }
     /**
      * Display the specified resource.
      */

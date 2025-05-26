@@ -31,7 +31,7 @@
                 <div class="card-body">
                     <form class="needs-validation" novalidate method="POST" action="{{ route('cantine.store') }}">
                         @csrf
-                        <fieldset>
+                        <fieldset class="mb-4">
                             <div class="row align-items-start">
                                 <!-- Colonne gauche -->
                                 <div class="col-md-5">
@@ -96,9 +96,6 @@
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <input type="submit" id="valider" value="{{ __('Enregistrer') }}" class="btn btn-primary btnEnregistrer"/>
-                                <a href="{{ route('Eleve.index') }}/{{ $rub }}/{{ $srub }}">
-                                    <input type="button" id="annuler" value="{{ __('Annuler') }}" class="btn btn-primary btnAnnuler"/>
-                                </a>
                             </div>
                         </div>
                     </form>

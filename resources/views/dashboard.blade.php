@@ -138,4 +138,21 @@
     });
 </script>
 
+
+@if(session('mil'))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        html: `{!! session('mil') !!}`,
+        width: 600,
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'shadow-lg rounded-4'
+        }
+    });
+});
+</script>
+@endif
 @endsection

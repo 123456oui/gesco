@@ -117,24 +117,34 @@ function getClasse(classe_id) {
         method: 'GET',
         dataType: 'json',
         success: function(response) {
-            if(response.classe<=0){
-                alert("⚠️ Il n'y a plus de place disponible dans cette classe !");
-                location.reload();
+            if (response.classe <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: "Classe pleine !",
+                    text: "⚠️ Il n'y a plus de place disponible dans cette classe.",
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                const rest = document.getElementById('rest');
+                rest.textContent = response.classe;
+                const divrest = document.getElementById('divrest');
+                divrest.style.display = 'flex';
             }
-            else{
-            const rest = document.getElementById('rest');
-            rest.textContent = response.classe;
-            const divrest = document.getElementById('divrest');
-            divrest.style.display = 'flex';
-            }
-
-            // Vous pouvez aussi manipuler la réponse ici selon vos besoins
         },
         error: function(xhr, status, error) {
             console.error('Erreur lors de la récupération de la classe :', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: "Une erreur s'est produite lors de la récupération des données.",
+            });
         }
     });
 }
+
 
 function max( selected){
    const  classe_id=selected.value;
