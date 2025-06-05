@@ -24,21 +24,20 @@
             <div class="d-flex align-items-center justify-content-between border-bottom " style="background-color:rgba(255, 255, 255, 0.88);">
 
                 {{-- ✅ Image gauche --}}
-                <div class="flex-shrink-0" style="width: 100px;">
+                <div class="flex-shrink-0" style="width: 80px;">
                     <img src="{{ asset('/images/logo.png') }}" alt="Logo gauche" style="height: 100px;">
                 </div>
 
                 {{-- ✅ Texte central (utilise flex-grow pour centrer automatiquement) --}}
                 <div class="flex-grow-1 text-center px-3">
                     <h6  class="mb-0 text-uppercase"> <strong>Burkina Faso </strong></h6>
-                    <small class="d-block fst-italic">Unité - Progrès - Justice</small>
-                    <h5 class="mt-1 mb-0">Lycée de l’Avenir</h5>
-                    <strong class="d-block mt-1">Carte Scolaire</strong>
+                    <small class="d-block fst-italic">La Patrie ou la Mort - Nous Vaincrons.</small>
+                    <h9 class="mt-1 mb-0">ECOLE MATERNELLE PRIMAIRE PRIVEE LES ELITES PLUS</h9>
                     <small class="d-block fst-italic">{{ session('annee') }}</small>
                 </div>
 
                 {{-- ✅ Image droite (collée à droite) --}}
-                <div class="flex-shrink-0 text-end" style="width: 100px;">
+                <div class="flex-shrink-0 text-end" style="width: 80px;">
                     <img src="{{ asset('/images/logo.png') }}" alt="Logo droit" style="height: 100px;">
                 </div>
 
@@ -53,12 +52,13 @@
                     <img src="{{ $eleve->Photo ?? asset('images/default-avatar.png') }}" 
                         alt="Photo élève" 
                         class="img-thumbnail mb-1"
-                        style="width: 100px; height: 100px; border-radius: 0%; object-fit: cover;">
+                        style="width: 150px; height: 150px; border-radius: 0%; object-fit: cover;">
 
-                    <p class="mb-0"><strong> <small >{{ $eleve->Matricule ?? '...' }} </small></strong></p>
+                    <p class="mb-0"><strong> <small > </small></strong></p>
                 </div>
                 {{-- Partie centre --}}
                 <div class="w-50 text-start px-3">
+                    <p class="mb-1"><strong>Matricule     </strong></p>
                     <p class="mb-1"><strong>Nom     </strong></p>
                     <p class="mb-1"><strong>Prenom  </strong></p>
                     <p class="mb-1"><strong>Date De Naissance </strong></p>
@@ -68,7 +68,8 @@
 
                 {{-- Partie droite --}}
                 <div class="w-50 text-start">
-                     <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->Nom }}   </p>
+                     <p class="mb-1"><strong class="mr-3">  : </strong>{{ $eleve->Matricule ?? '...' }}  </p>
+                    <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->Nom }}   </p>
                     <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->Prenom }}   </p>
                     <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->datenais}}   </p>
                     <p class="mb-1"><strong class="mr-3">  : </strong>{{$eleve->lieunais }}   </p>
@@ -88,8 +89,8 @@
 
                 {{-- Partie droite --}}
                 <div class="text-end">
-                    <small> <strong>Lycée de l’Avenir </strong></small> <br>
-                    <small>Debout pour changer, unis pour vaincre !</small>
+                    <small> <strong>GROUPE SCOLAIRE LES ELITES </strong></small> <br>
+                    <small>UNE EDUCATION UN SAVOIR UN CITOYEN</small>
                 </div>
             </div>
 

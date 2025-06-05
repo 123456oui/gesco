@@ -43,7 +43,6 @@
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">
                                     <input type="submit" id="valider"  value="{{__('Imprimer')}}" class="btn btn-primary btnEnregistrer"/>
-                                    <a href="{{route('banque.index')}}/{{$rub}}/{{$srub}}"><input type="button" id="annuler" value={{__('Annuler')}} class="btn btn-primary btnAnnuler"/></a>
                                 </div>
                             </div>
                         </form>

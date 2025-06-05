@@ -91,8 +91,12 @@
             <img src="{{ asset('images/favicon.png') }}" alt="Logo 2">
         </div>
     </div>
+    
     <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" > NOM DE L ETABLISEMENT </h5>
+            <h5 class="text-center" > Banque : <strong>{{$banque}}</strong></h5>
+    </div>
+     <div class="etablissement mt-2 mb-2">
+            <h5 class="text-center" > Versement du <strong>{{$debut}}</strong> au <strong>{{ $fin}}</strong> </h5>
     </div>
     <div class="container-fluid">
     <div class="main-card card">
@@ -124,54 +128,41 @@
                         <td>{{$item->created_at}}</td>  
                     </tr>
                 @endforeach
+               
             </tbody>
+            
         </table>
+        
     	</div>
+        <div><p> La somme total des versements  est de : <strong>{{ strtoupper($lettres) }}  ( {{ number_format($total, 0, ',', ' ') }}) FCFA</strong>  </p></div>
     </div>
 
 </div>
 <script>
-    window.onload = function () {
+window.onload = function () {
     setTimeout(function () {
         const bilan = document.getElementById("bilan-container");
-        if (!bilan) return;
+        if (!bilan) {
+            console.error("Élément #bilan-container introuvable.");
+            return;
+        }
 
-        const styles = [...document.querySelectorAll('link[rel="stylesheet"], style')]
+        const originalBody = document.body.innerHTML;
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
             .map(tag => tag.outerHTML)
             .join("\n");
 
-        // Ouvre une nouvelle fenêtre pour l'impression
-        const printWindow = window.open('', '_blank', 'width=900,height=600');
-        printWindow.document.open();
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title></title>
-                    ${styles}
-                    <style>
-                        @page { size: auto; margin: 0; }
-                        body { margin: 0; padding: 9; }
-                    </style>
-                </head>
-                <body>
-                    ${bilan.outerHTML}
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
+        document.body.innerHTML = `${styles}${bilan.outerHTML}`;
+        window.print();
 
-        printWindow.onload = function () {
-            printWindow.focus();
-            printWindow.print();
-        };
-
-        // Utilisation de setTimeout pour rediriger après l'impression
-        setTimeout(function() {
-            printWindow.close();
-            // Redirection après un délai (environ 2 secondes après l'impression)
+        // Optionnel : rediriger après impression
+        setTimeout(function () {
             window.location.href = "{{ url('bversement/' . $rub . '/' . $srub) }}";
-        }, 2000); // Tu peux ajuster le délai si nécessaire
+        }, 3000);
     }, 1000);
 };
+
+
+       
 </script>
 @endsection 
