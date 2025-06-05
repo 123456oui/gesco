@@ -5,7 +5,7 @@
 
     {{-- ✅ Partie 1 : Alerte selon la scolarité --}}
     <div class="mb-4" id="info-section">
-        @if ($scolarite > $total)
+        @if (0 >= $total)
             <div class="alert alert-danger" id="alerte-scolarite">
                 <strong>Attention !</strong> Vous devez d'abord payer la scolarité de l'élève avant de pouvoir imprimer la carte scolaire.
             </div>
@@ -102,7 +102,7 @@
     {{-- ✅ Partie 3 : Impression / Reçu --}}
     <div id="impression-section " class="text-end">
         {{-- À compléter avec un bouton ou un aperçu imprimable --}}
-        <button class="btn btn-primary" @if($scolarite > $total) disabled @endif onclick="imprimerCarte()">
+        <button class="btn btn-primary" @if($total<=0) disabled @endif onclick="imprimerCarte()">
             <i class="fas fa-print me-1"></i> Imprimer la carte scolaire
         </button>
     </div>

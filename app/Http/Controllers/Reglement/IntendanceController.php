@@ -30,7 +30,7 @@ class IntendanceController  extends Controller
 
     $cycles = DB::table('cycles')->get();
     $niveaux = DB::table('niveaux')->get();
-    $classes = DB::table('classes')->get();
+    $classes = DB::table('classes') ->where('annee', $annee)->get();
     $inscriptions = DB::table('inscriptions')->where('idanneescolaire', $annee)->get();
     $banques = DB::table('banques')->get(); // ou nom exact de la table des banques
     return view('intendance.index', compact('rub', 'srub','cycles', 'niveaux', 'classes', 'inscriptions', 'banques'));

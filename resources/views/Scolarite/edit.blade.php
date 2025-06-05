@@ -1,3 +1,4 @@
+
 @extends('layouts.template')
 @section('styles')
 <style>
@@ -29,24 +30,51 @@
     background-color:rgba(14, 113, 162, 0.35)!important;
 }
 
+/* Responsive table */
+@media (max-width: 767.98px) {
+    .matable, .matable thead, .matable tbody, .matable th, .matable td, .matable tr {
+        display: block !important;
+        width: 100% !important;
+    }
+    .matable thead tr {
+        display: none !important;
+    }
+    .matable td {
+        border: none !important;
+        position: relative !important;
+        padding-left: 50% !important;
+        min-height: 40px;
+    }
+    .matable td:before {
+        position: absolute;
+        top: 0;
+        left: 10px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #2980b9;
+        content: attr(data-label);
+    }
+}
 </style>
+@endsection
+
 @section('content')
-<div class="container " >
+<div class="container-fluid">
     <div class="main-card card">
         <div class="card-header py-0">
             <h4>{{ __('Détail des règlements') }}</h4>
         </div>
     </div>
 
-    <div class="row mt-4 mb-4">
+    <div class="row mt-4 ">
         {{-- Informations sur l'élève (à gauche) --}}
-        <div class="col-md-6">
-            <fieldset class=" p-3 mb-2">
-                <legend class="w-auto">{{ __('Informations de l\'élève') }}</legend>
+        <div class="col-md-6 col-12  mb-4">
+            <fieldset class="p-3 mb-2 h-auto">
+                <legend class="w-auto h-auto">{{ __('Informations de l\'élève') }}</legend>
                 <div class="text-center mb-3">
-                    <img src="{{ $eleve->Photo }}" alt="Photo de {{ $eleve->Nom }}" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    <img src="{{ $eleve->Photo }}" alt="Photo de {{ $eleve->Nom }}" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
                 </div>
-
                 <div class="form-group">
                     <label for="matricule">{{ __('Matricule') }}</label>
                     <input type="text" id="matricule" class="form-control" value="{{ $eleve->Matricule }}" disabled>
@@ -71,7 +99,7 @@
         </div>
 
         {{-- Informations des règlements (à droite) --}}
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6 col-12 mb-4">
             <fieldset class="p-3 mb-2">
                 <legend class="w-auto">{{ __('Détails des paiements') }}</legend>
                 <div class="form-group">
@@ -90,24 +118,24 @@
                 {{-- Détails des paiements --}}
                 <h4>{{ __('Historique des paiements') }}</h4>
                 <div style="max-height: 280px; overflow-y: auto;">
-                <table class="table table-bordered matable">
-                    <thead>
-                        <tr>
-                            <th>{{ __('Date') }}</th>
-                            <th>{{ __('Montant') }}</th>
-                            <th>{{ __('Mode de paiement') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($reglements as $reglement)
+                    <table class="table table-bordered matable">
+                        <thead>
                             <tr>
-                            <td>{{ $reglement->created_at->isoFormat('LLL') }}</td>
-                                <td>{{ number_format($reglement->montant, 2) }} FCFA</td>
-                                <td>{{ $reglement->banque->libellebanque }}</td>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Montant') }}</th>
+                                <th>{{ __('Mode de paiement') }}</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($reglements as $reglement)
+                                <tr>
+                                    <td data-label="{{ __('Date') }}">{{ $reglement->created_at->isoFormat('LLL') }}</td>
+                                    <td data-label="{{ __('Montant') }}">{{ number_format($reglement->montant, 2) }} FCFA</td>
+                                    <td data-label="{{ __('Mode de paiement') }}">{{ $reglement->banque->libellebanque }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </fieldset>
         </div>
