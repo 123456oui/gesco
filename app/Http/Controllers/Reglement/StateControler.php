@@ -155,7 +155,7 @@ class StateControler extends Controller
         if (!$eleve) continue;
 
         // Supposons que tu as une méthode ou un champ pour vérifier la scolarité
-        if ($reglements>=$totalInscriptions) {
+        if ($reglements>0) {
             $a_jour[] = $eleve;
         } else {
             $non_a_jour[] = $eleve;

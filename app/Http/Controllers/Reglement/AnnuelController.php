@@ -15,18 +15,101 @@ class AnnuelController extends Controller
      * Display a listing of the resource.
      */
     public function index($rub, $srub)
-    {
+{
         $annee = session('annee');
-        $classe= DB::table('classes')->where('annee', $annee)->first();
-        if (!$classe) {
-            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ Aucune classe trouvée pour l\'année scolaire sélectionnée.</div>";
+        $classes = DB::table('classes')->where('annee', $annee)->get();
+
+        if ($classes->isEmpty()) {
+            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ Aucune classe trouvée pour l'année scolaire sélectionnée.</div>";
             return redirect()->back()->with('mil', $message);
         }
-        $classes=Classe::orderby('created_at','desc')->get();
-        $mois= DB::table('mois')->get();
-        $inscriptions = DB::table('inscriptions')->where('idanneescolaire', $annee)->get();
-        return view('annuel.index')->with(["classes"=>$classes,"inscriptions"=>$inscriptions,"mois"=>$mois,"rub"=>$rub,"srub"=>$srub]);
-        //
+
+        // Pour chaque classe, on récupère ses inscriptions et le total des versements pour chaque inscription
+        $classesWithInscriptions = [];
+        foreach ($classes as $classe) {
+            $inscriptions = DB::table('inscriptions')
+                ->where('idclasse', $classe->id)
+                ->where('idanneescolaire', $annee)
+                ->get();
+
+            // Initialisation des compteurs
+            $classe->ajours = 0;
+            $classe->nonajours = 0;
+            $classe->tatalinscription = 0;
+            $classe->totalverserr = 0;
+            $classe->nombredinscription = $inscriptions->count(); 
+            foreach ($inscriptions as $inscription) {
+                // Calcule le total des versements pour cette inscription
+                $inscription->total_versement = DB::table('reglements')
+                    ->where('id_eleve', $inscription->Matricule)
+                    ->sum('montant');
+
+                // Comparaison et incrémentation
+                if ($inscription->total_versement >= $inscription->montantscolariteE) {
+                    $classe->ajours++;
+                } else {
+                    $classe->nonajours++;
+                }
+
+                // Calcul des totaux pour la classe
+                $classe->tatalinscription += $inscription->montantscolariteE;
+                $classe->totalverserr += $inscription->total_versement;
+            }
+
+            $classe->inscriptions = $inscriptions;
+            $classesWithInscriptions[] = $classe;
+        }
+        $letotaldesinscription = 0;
+        $letotaldesversement = 0;
+
+        foreach ($classesWithInscriptions as $classe) {
+            $letotaldesinscription += $classe->tatalinscription;
+            $letotaldesversement += $classe->totalverserr;
+        }
+
+        $cantinesByClasse = [];
+
+        foreach ($classesWithInscriptions as $classe) {
+            $cantines = [];
+            $classe->totalcantine = 0; // Initialisation du compteur
+            $classe->nombredinscriptionavecantine = 0; // Nouveau compteur
+
+            foreach ($classe->inscriptions as $inscription) {
+                // Récupère toutes les cantines pour cette inscription
+                $cantineEleve = DB::table('cantines')
+                    ->where('Matricule', $inscription->Matricule)
+                    ->where('annee', $annee)
+                    ->get();
+
+                // Ajoute le nombre de cantines pour cette inscription au total de la classe
+                $classe->totalcantine += $cantineEleve->count();
+
+                // Compte l'inscription si elle a au moins une cantine
+                if ($cantineEleve->count() > 0) {
+                    $classe->nombredinscriptionavecantine++;
+                }
+
+                // On ajoute la liste des cantines pour chaque inscription
+                $inscription->cantines = $cantineEleve;
+                $cantines[] = $cantineEleve;
+            }
+            // On ajoute la liste des cantines de la classe
+            $classe->cantines = $cantines;
+            $cantinesByClasse[] = $classe;
+        }
+        $cantinetotal=0;
+        foreach ($cantinesByClasse as $classe) {
+            $cantinetotal += $classe->totalcantine;
+        }
+        return view('annuel.index')->with([
+            'cantinetotal' => $cantinetotal,
+            "classesWithInscriptions" => $classesWithInscriptions,
+            "cantinesByClasse" => $cantinesByClasse,
+            "letotaldesinscription" => $letotaldesinscription,
+            "letotaldesversement" => $letotaldesversement,
+            "rub" => $rub,
+            "srub" => $srub
+        ]);
     }
 
     /**

@@ -17,7 +17,7 @@ class CantineController extends Controller
     public function index($rub, $srub)
     {
         $annee = session('annee');
-        $classes=Classe::orderby('created_at','desc')->get();
+        $classes=Classe::orderby('created_at','desc') ->where('annee', $annee)->get();
         $mois= DB::table('mois')->get();
         $inscriptions = DB::table('inscriptions')->where('idanneescolaire', $annee)->get();
         return view('Cantine.create')->with(["classes"=>$classes,"inscriptions"=>$inscriptions,"mois"=>$mois,"rub"=>$rub,"srub"=>$srub]);
