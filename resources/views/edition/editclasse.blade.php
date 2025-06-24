@@ -81,7 +81,7 @@
 
 @section('content')
 <div class="container mt-4 recu-container" id="bilan-container">
-    <h4 class="text-center">Bilan versement</h4>
+    <h4 class="text-center">Liste des Elèves </h4>
     <hr>
     <div class="logos" id="logos">
         <div class="logo1">
@@ -93,11 +93,9 @@
     </div>
     
     <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" > Banque : <strong>{{$banque}}</strong></h5>
+            <h5 class="text-center" > Classe  :{{$classe->libelleclasse}}<strong></strong></h5>
     </div>
-     <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" > Versement du <strong>{{$debut}}</strong> au <strong>{{ $fin}}</strong> </h5>
-    </div>
+     
     <div class="container-fluid">
     <div class="main-card card">
         
@@ -109,23 +107,19 @@
                     <th>{{__('Matricule')}} </th>
                    <th>{{__('Nom ')}} </th>
                    <th>{{__('Prenom(s) ')}} </th>
-                   <th>{{__('Montant ')}} </th>
-                   <th>{{__('Date Règlement ')}} </th>
-
-
+                   
 
                 
                 </tr>
             </thead>
             
             <tbody>
-                @foreach($bversement as $item)
+                @foreach($elevesclasse as $item)
                     <tr>
-                        <td>{{$item->id_eleve}}</td>
-                        <td>{{$item->eleve->Nom}}</td>
-                        <td>{{$item->eleve->Prenom}}</td>
-                        <td>{{$item->montant}}</td>
-                        <td>{{$item->created_at}}</td>  
+                        <td>{{$item->Matricule}}</td>
+                        <td>{{$item->Nom}}</td>
+                        <td>{{$item->Prenom}}</td>
+                         
                     </tr>
                 @endforeach
                
@@ -134,13 +128,12 @@
         </table>
         
     	</div>
-        <div><p> La somme total des versements  est de : <strong>{{ strtoupper($lettres) }}  ( {{ number_format($total, 0, ',', ' ') }}) FCFA</strong>  </p></div>
     </div>
 
 </div>
 <script>
 window.onload = function () {
-    setTimeout(function () {
+   
         const bilan = document.getElementById("bilan-container");
         if (!bilan) {
             console.error("Élément #bilan-container introuvable.");
@@ -156,13 +149,11 @@ window.onload = function () {
         window.print();
 
         // Optionnel : rediriger après impression
-        setTimeout(function () {
-            window.location.href = "{{ url('bversement/' . $rub . '/' . $srub) }}";
-        }, 3000);
-    }, 1000);
+         window.onafterprint = function () {
+         window.location.href = "{{ url('/eleveclasse/30/33') }}";
+};        
+      
 };
-
-
        
 </script>
 @endsection 

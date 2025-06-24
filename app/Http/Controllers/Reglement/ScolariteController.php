@@ -17,13 +17,14 @@ class ScolariteController extends Controller
     /**
      * Display a listing of the resource.
      */
+   
    public function index(Request $request, $rub, $srub)
     {
         $annee = session('annee'); // année scolaire en cours stockée en session
     
         // Sous-requête : total cumulé par élève pour l’année en cours
         $reglements = DB::table('reglements')
-            ->select('id_eleve', DB::raw('SUM(montant) as total_paye'))
+            ->select('id_eleve', DB::raw('SUM(cumule) as total_paye'))
             ->where('annee', $annee)
             ->groupBy('id_eleve');
     
@@ -128,7 +129,7 @@ class ScolariteController extends Controller
         ->where('idanneescolaire', $annee)
         ->where('Matricule', $request->input('matricule'))->first();
         if($request->input('cumul')< $totalInscriptions->montantscolariteE){
-            if($totalInscriptions->montantscolariteE- $total_regle >=0 ){
+            if($totalInscriptions->montantscolariteE- $total_regle >0 ){
                 $request->validate([
                     'matricule' => 'required|string|exists:eleves,Matricule',
                     'banque' => 'required|exists:banques,id',

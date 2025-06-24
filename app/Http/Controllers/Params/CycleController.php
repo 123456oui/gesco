@@ -113,7 +113,16 @@ class CycleController extends Controller
        if ($cycleId) {
         $niveaux=Niveau::where('idcycle', $cycleId)->where('annee', $annee)->get();
         return response()->json(["success"  =>true,"niveaux"=>$niveaux ]);
+    }    
+    }
+    public function cycleniveauzango(Request $request)
+    {
+      $cycleId=$request->get( 'cycleId');
+      $annee = session('annee');
+       if ($cycleId) {
+        $niveaux=Niveau::where('idcycle', $cycleId)->where('annee', $annee)->get();
+        return response()->json(["success"  =>true,"niveaux"=>$niveaux ]);
+    }    
     }
 
-}
 }

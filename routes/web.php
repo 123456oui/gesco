@@ -16,11 +16,17 @@ use App\Http\Controllers\Params\NiveauController;
 use App\Http\Controllers\Params\ClasseController;
 use App\Http\Controllers\Params\BanqueController;
 use App\Http\Controllers\Params\PchargeController;
+use App\Http\Controllers\Params\ParamcantineController;
+use App\Http\Controllers\Params\AvoirController;
+use App\Http\Controllers\Params\GenrepersoController;
+use App\Http\Controllers\Params\RetenueController;
+use App\Http\Controllers\Params\TypepersoController;
 use App\Http\Controllers\Reglement\ScolariteController;
 use App\Http\Controllers\Reglement\IntendanceController;
 use App\Http\Controllers\Reglement\StateControler;
 use App\Http\Controllers\Reglement\CantineController;
 use App\Http\Controllers\Reglement\AnnuelController;
+use App\Http\Controllers\Reglement\EleveclasseController;
 use App\Http\Controllers\BVERSEMENT\VbanqueController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -99,6 +105,7 @@ Route::get('cycle/{rub}/{srub}',[CycleController::class,'index']);
 Route::get('cycle/create/{rub}/{srub}',[CycleController::class,'create']);
 Route::get('cycle/{id}/edit/{rub}/{srub}',[CycleController::class,'edit']);
 Route::get('cyclebyId/{rub}/{srub}',[CycleController::class,'cycleniveau']);
+Route::get('cyclebyId/',[CycleController::class,'cycleniveauzango']);
 
 
 Route::resource('niveau',NiveauController::class);
@@ -106,6 +113,41 @@ Route::get('niveau/{rub}/{srub}',[NiveauController::class,'index']);
 Route::get('niveau/create/{rub}/{srub}',[NiveauController::class,'create']);
 Route::get('niveau/{id}/edit/{rub}/{srub}',[NiveauController::class,'edit']);
 Route::get('niveaubyid/{rub}/{srub}',[NiveauController::class,'niveauclasse']);
+Route::get('niveaubyid/',[NiveauController::class,'niveauclassezango']);
+
+
+
+Route::resource('paramcantine',ParamcantineController::class);
+Route::post('paramcantine',[ParamcantineController::class,'store'])->name('paramcantine.store');
+Route::get('paramcantine/{rub}/{srub}',[ParamcantineController::class,'index']);
+Route::get('paramcantine/create/{rub}/{srub}',[ParamcantineController::class,'create']);
+Route::get('paramcantine/{id}/edit/{rub}/{srub}',[ParamcantineController::class,'edit']);
+
+
+Route::resource('paramavoir',AvoirController::class);
+Route::post('paramavoir',[AvoirController::class,'store'])->name('paramavoir.store');
+Route::get('paramavoir/{rub}/{srub}',[AvoirController::class,'index']);
+Route::get('paramavoir/create/{rub}/{srub}',[AvoirController::class,'create']);
+Route::get('paramavoir/{id}/edit/{rub}/{srub}',[AvoirController::class,'edit']);
+
+Route::resource('genreperso',GenrepersoController::class);
+Route::post('genreperso',[GenrepersoController::class,'store'])->name('genreperso.store');
+Route::get('genreperso/{rub}/{srub}',[GenrepersoController::class,'index']);
+Route::get('genreperso/create/{rub}/{srub}',[GenrepersoController::class,'create']);
+Route::get('genreperso/{id}/edit/{rub}/{srub}',[GenrepersoController::class,'edit']);
+
+Route::resource('paramretenue',RetenueController::class);
+Route::post('paramretenue',[RetenueController::class,'store'])->name('paramretenue.store');
+Route::get('paramretenue/{rub}/{srub}',[RetenueController::class,'index']);
+Route::get('paramretenue/create/{rub}/{srub}',[RetenueController::class,'create']);
+Route::get('paramretenue/{id}/edit/{rub}/{srub}',[RetenueController::class,'edit']);
+
+Route::resource('typeperso',TypepersoController::class);
+Route::post('typeperso',[TypepersoController::class,'store'])->name('typeperso.store');
+Route::get('typeperso/{rub}/{srub}',[TypepersoController::class,'index']);
+Route::get('typeperso/create/{rub}/{srub}',[TypepersoController::class,'create']);
+Route::get('typeperso/{id}/edit/{rub}/{srub}',[TypepersoController::class,'edit']);
+
 
 Route::resource('banque',BanqueController::class);
 Route::get('banque/{rub}/{srub}',[BanqueController::class,'index']);
@@ -143,6 +185,18 @@ Route::get('state/create/{rub}/{srub}',[StateControler::class,'create']);
 Route::get('state/{id}/edit/{rub}/{srub}',[StateControler::class,'edit']);
 Route::post('/state/impression/analyse', [StateControler::class, 'analyseImpression'])->name('state.impression.analyse');
 
+Route::resource('eleveclasse',EleveclasseController::class);
+Route::get('eleveclasse/{rub}/{srub}',[EleveclasseController::class,'index']);
+Route::get('eleveclasse/create/{rub}/{srub}',[EleveclasseController::class,'create']);
+Route::get('eleveclasse/{id}/edit/{rub}/{srub}',[EleveclasseController::class,'edit']);
+Route::get('/eleveclasse/{rub}/{srub}/edition', [EleveclasseController::class, 'editclasse'])->name('editclasse.editclasse');
+
+
+
+
+
+
+
 Route::resource('classe',ClasseController::class);
 Route::post('classe',[ClasseController::class,'store'])->name('classe.store');
 Route::get('classe/{rub}/{srub}',[ClasseController::class,'index']);
@@ -164,7 +218,7 @@ Route::get('intendance/{rub}/{srub}',[IntendanceController::class,'index']);
 Route::post('intendance',[IntendanceController::class,'store'])->name('intendance.store');
 
 
-Route::resource('cantine',ClasseController::class);
+Route::resource('cantine',CantineController::class);
 Route::post('cantine',[CantineController::class,'store'])->name('cantine.store');
 Route::get('cantine/{rub}/{srub}',[CantineController::class,'index']);
 Route::get('cantine/create/{rub}/{srub}',[CantineController::class,'create']);

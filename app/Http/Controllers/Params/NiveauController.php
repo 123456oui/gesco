@@ -116,5 +116,20 @@ public function niveauclasse(Request $request, $rub,$srub){
     }
 
 }
+
+public function niveauclassezango(Request $request){
+    $niveauId=$request->get( 'niveauId') ;
+
+      
+       if ($niveauId) {
+         $niveau = Niveau::find($niveauId);
+        $scolarite=$niveau->Montantscolarite; 
+       
+        
+        $classes=Classe::where('idniveau', $niveauId)->get();
+        return response()->json(["success"  =>true,"classes"=>$classes  ,"scolarite"=>$scolarite]);
+    }
+
+}
    
 }

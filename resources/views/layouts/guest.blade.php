@@ -33,9 +33,9 @@
        
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="icon" href="{{asset('images/favi.png')}}" type="image/x-icon"/>
+        <link rel="icon" href="{{asset('images/favicon.jpg')}}" type="image/x-icon"/>
     </head>
-    <body style="background-image: url('');
+    <body style="background-image: url('{{ asset('images/ecole.jpg') }}');
         position:fixed;
         background-repeat:no-repeat;
         top:auto;
