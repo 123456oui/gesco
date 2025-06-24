@@ -1,7 +1,8 @@
 @extends('layouts.template')
+
 <style>
     .recu-container {
-        background-image: url('{{ asset('images/favicon.png') }}'); /* Remplace par le bon chemin */
+        background-image: url('{{ asset('images/favicon.png') }}');
         background-size: cover;
         background-position: center;
         padding: 40px;
@@ -16,7 +17,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(255, 255, 255, 0.85); /* voile blanc semi-transparent */
+        background: rgba(255, 255, 255, 0.85);
         z-index: 0;
     }
 
@@ -24,63 +25,66 @@
         position: relative;
         z-index: 1;
     }
+
     .logos {
         display: flex;
-        justify-content: space-between; /* Logo1 à gauche, Logo2 à droite */
+        justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
     }
 
     .logo1 img, .logo2 img {
-        height: 250px; /* Ajuste selon tes besoins */
+        height: 250px;
     }
+
     .infosniveau {
-    display: flex;  /* Pour placer les sous-divs horizontalement */
-    background-color: #f0f0f0;  /* Fond gris clair */
-  /* Espacement autour des sous-divs */
-    border-radius: 8px;  /* Bords arrondis */
-    height: 200px !important;
-}
+        display: flex;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        height: 200px !important;
+    }
 
-.cycle, .niveau, .classe {
-    margin-right:0;
-    width: 50%;
-    display: flex;                /* Active le mode flex */
-    justify-content: center;     /* Centre horizontalement */
-    align-items: center;         /* Centre verticalement */
-    height: 100%; 
-}
-.tableau {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;  /* Fond léger */
-    border-radius: 8px;
-    overflow-x: auto; /* Pour gérer le débordement si le tableau est large */
-}
+    .cycle, .niveau, .classe {
+        margin-right: 0;
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
 
-.tableau table {
-    width: 100%;
-    border-collapse: collapse;
-}
+    .tableau {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
 
-.tableau th, .tableau td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-}
+    .tableau table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-.tableau th {
-    background-color: #e0e0e0;
-}
-.signature{
-    margin-top:20px;
-    height: 100px;
-    text-align: right;
-}
+    .tableau th, .tableau td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .tableau th {
+        background-color: #e0e0e0;
+    }
+
+    .signature {
+        margin-top: 20px;
+        height: 100px;
+        text-align: right;
+    }
 </style>
 
 @section('content')
-<div class="container mt-4 recu-container" id="recu-container" >
+<div class="container mt-4 recu-container" id="recu-container">
     <h4 class="text-center">REÇU DE PAIEMENT</h4>
     <hr>
     <div class="logos" id="logos">
@@ -92,42 +96,64 @@
         </div>
     </div>
     <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" > NOM DE L ETABLISEMENT </h5>
+        <h5 class="text-center">NOM DE L'ETABLISSEMENT</h5>
     </div>
+
     <div class="infosniveau">
-         
-         <div class="niveau">
+        <div class="niveau">
             <div class="mr-2">
-            <p><strong >Matricule de l élève :</strong> </p>
-            <p><strong >Nom  de l élève :</strong> </p>
-            <p><strong >Classe :</strong></p>
-            <p><strong >Année scolaire :</strong></p>
-            </div>
-            <div>
-            <p> {{ $reglement->eleve->Matricule }}</p>
-            <p> {{ $reglement->eleve->Nom }} {{ $reglement->eleve->Prenom }}</p>
-            <p>{{ $classe->libelleclasse }}</p>
-            <p> {{ $reglement->annee }}</p>
+                <p>Monsieur/Madame</p>
+                <p>En classe</p>
+                <p>A Verser la somme de</p>
+                <p>Pour l'année accadémique</p>
+                @if ($autresReglements->isEmpty())
+                    <p>APE (Association des Parents d'Élèves)</p>
+                @endif
             </div>
         </div>
-         <div class="classe">
-            <div class="mr-3">
-         <p><strong>Banque :</strong></p>
-         <p><strong>Montant payé :</strong> </p>
-         <p><strong>Date :</strong> </p>
-            </div>
+
+        <div class="classe">
             <div>
-         <p> {{ $reglement->banque->libellebanque }}</p>
-         <p>{{ number_format($reglement->montant, 0, ',', ' ') }} FCFA</p>
-         <p>{{ $reglement->created_at->isoFormat('LL') }}</p>
+                <p><strong>{{ $reglement->eleve->Nom }} {{ $reglement->eleve->Prenom }}</strong></p>
+                <p>de</p>
+                @if($autresReglements->isEmpty())
+                    <p><strong>{{$apelettre  }} </strong></p>
+                @else
+                    <p><strong>{{ $lettres }} </strong></p>
+                @endif
+                <p><strong>{{ $reglement->annee }}</strong></p>
+                @if ($autresReglements->isEmpty())
+                    <p><strong>Cinq Mille</strong></p>
+                @endif
             </div>
-         </div>
+        </div>
+
+        <div class="niveau">
+            <div>
+                <p>Matricule {{ $reglement->eleve->Matricule }}</p>
+                <p><strong>{{ $classe->libelleclasse }}</strong></p>
+                @if($autresReglements->isEmpty())
+                    <p><strong>{{ number_format($ape, 0, ',', ' ') }} FCFA</strong></p>
+                @else
+                    <p><strong>{{ number_format( $reglement->montant, 0, ',', ' ') }} FCFA</strong></p>
+                @endif
+                <p>à la banque {{ $reglement->banque->libellebanque }}</p>
+                @if($autresReglements->isEmpty())
+                    <p><strong>{{ number_format( 5000, 0, ',', ' ') }} FCFA</strong></p>
+                @endif
+                
+            </div>
+        </div>
     </div>
+
     <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" >PAYEMENT ULTERIEUR </h5>
+        <p style="text-align: right;"><em><strong>total payer :</strong> {{ $montantTotalAutres }} FCFA</em></p>
+        <p style="text-align: right;"><em><strong>reste à payer :</strong> {{ $rest }} FCFA</em></p>
+        <h5 class="text-center">PAYEMENT ULTERIEUR</h5>
     </div>
+
     <div class="tableau">
-            <table>
+        <table>
             <thead>
                 <tr>
                     <th>Date</th>
@@ -149,62 +175,57 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
 
-            <p style="text-align: right;"> <em> <strong> total payer :</strong>{{ $montantTotalAutres}}  FCFA</em> </p>
-            <p style="text-align: right;"> <em> <strong> reste a payer :</strong>{{ $rest}}  FCFA</em> </p>
+    <div class="signature">
+        <div>
+            <p><strong>Caissier (caissière)</strong></p>
         </div>
-        <div class="signature" >
-            <div>
-                <p > <strong>Caissier (caissiere)</strong></p>
-            </div>
-            <div>
-            <em>Ouagadougou le {{now()->isoFormat('LL')}}</em>
-            </div>
+        <div>
+            <em>Ouagadougou le {{ now()->isoFormat('LL') }}</em>
         </div>
+    </div>
 </div>
-    <script>
+
+<script>
     window.onload = function () {
-    setTimeout(function () {
-        const recu = document.getElementById("recu-container");
-        if (!recu) return;
+        setTimeout(function () {
+            const recu = document.getElementById("recu-container");
+            if (!recu) return;
 
-        const styles = [...document.querySelectorAll('link[rel="stylesheet"], style')]
-            .map(tag => tag.outerHTML)
-            .join("\n");
+            const styles = [...document.querySelectorAll('link[rel="stylesheet"], style')]
+                .map(tag => tag.outerHTML)
+                .join("\n");
 
-        // Ouvre une nouvelle fenêtre pour l'impression
-        const printWindow = window.open('', '_blank', 'width=900,height=600');
-        printWindow.document.open();
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title></title>
-                    ${styles}
-                    <style>
-                        @page { size: auto; margin: 0; }
-                        body { margin: 0; padding: 9; }
-                    </style>
-                </head>
-                <body>
-                    ${recu.outerHTML}
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
+            const printWindow = window.open('', '_blank', 'width=900,height=600');
+            printWindow.document.open();
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Reçu de paiement</title>
+                        ${styles}
+                        <style>
+                            @page { size: auto; margin: 0; }
+                            body { margin: 0; padding: 9; }
+                        </style>
+                    </head>
+                    <body>
+                        ${recu.outerHTML}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
 
-        printWindow.onload = function () {
-            printWindow.focus();
-            printWindow.print();
-        };
+            printWindow.onload = function () {
+                printWindow.focus();
+                printWindow.print();
+            };
 
-        // Utilisation de setTimeout pour rediriger après l'impression
-        setTimeout(function() {
-            printWindow.close();
-            // Redirection après un délai (environ 2 secondes après l'impression)
-            window.location.href = "{{ url('Scolarite/' . $rub . '/' . $srub) }}";
-        }, 5000); // Tu peux ajuster le délai si nécessaire
-    }, 1000);
-};
-
+            setTimeout(function () {
+                printWindow.close();
+                window.location.href = "{{ url('Scolarite/' . $rub . '/' . $srub) }}";
+            }, 2000);
+        }, 1000);
+    };
 </script>
-@endsection 
+@endsection

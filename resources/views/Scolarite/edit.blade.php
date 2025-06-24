@@ -63,6 +63,16 @@
 <div class="container-fluid">
     <div class="main-card card">
         <div class="card-header py-0">
+            <div class="  d-flex align-items-center m-auto" style="float:right" >
+                <!-- Icône Noël -->
+                <button type="button" class="btn btn-success d-flex align-items-center rounded-pill px-2 mx-3"  onclick="window.location.href='{{ route('scolarite.noel', ['id' => $eleve->Matricule, 'rub' => $rub, 'srub' => $srub]) }}'">
+                    <i class="fas fa-tree me-2 fa-1x mx-2"></i> Noël
+                </button>
+                <!-- Icône Cloture -->
+                <button type="button" class="btn btn-success d-flex align-items-center rounded-pill px-2" onclick="window.location.href='{{ route('scolarite.cloture', ['id' => $eleve->Matricule, 'rub' => $rub, 'srub' => $srub]) }}'">
+                    <i class="fas fa-glass-cheers me-2 fa-1x mx-2 "></i> Cloture
+                </button>
+            </div>
             <h4>{{ __('Détail des règlements') }}</h4>
         </div>
     </div>

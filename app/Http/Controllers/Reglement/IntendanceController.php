@@ -47,9 +47,16 @@ class IntendanceController  extends Controller
         $rub = $request->input('rub');
         $srub = $request->input('srub');
         $annee = session('annee'); 
+        $matricule = $request->input('matricule');
         $reglements = Reglement::where('id_eleve', $request->input('matricule'))
             ->where('annee', $annee)
             ->get();
+        if ($reglements->isEmpty()) {
+            $vers = $request->input('versement');
+            if($vers < 5000){
+                return redirect()->back()->with('error', 'Veillez entrer une somme superieur ou egal a 5000 franc cfa a raison de l APE au premier versement  ');
+            }
+        }
 
         // 4. Somme des montants réglés
         $total_regle = $reglements->sum('montant')+ $request->input('versement');
@@ -76,6 +83,14 @@ class IntendanceController  extends Controller
                         'annee' => $annee,
                         'ticketbanque' => $ticketPath,
                     ]);
+                    if ($reglements->isEmpty()) {
+                        //crrer l ape .
+                        \DB::table('APE')->insert([
+                        'matricule' => $matricule,
+                        'montant' => 5000,
+                        'annee' => $annee
+                    ]);
+                    }
                     //$reglement ->save();
                     //
                     return redirect()->route('intendance.recu', ['id' => $reglement->id,
@@ -122,8 +137,10 @@ class IntendanceController  extends Controller
     ->get();
     $montantTotalAutres = $autresReglements->sum('montant')+$reglement->montant ;
     $lettres=$this->afficher($reglement->montant);
+    $ape=$reglement->montant-5000;
+    $apelettre=$this->afficher($ape);
     $rest=$inscription->montantscolariteE - $montantTotalAutres;
-    return view('intendance.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest','lettres' ));
+    return view('intendance.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest','lettres','ape', 'apelettre'));
 }
 
 }

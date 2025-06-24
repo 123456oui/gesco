@@ -18,7 +18,7 @@ class AnnuelController extends Controller
 {
         $annee = session('annee');
         $classes = DB::table('classes')->where('annee', $annee)->get();
-
+        $ape=DB::table('APE')->where('annee', $annee)->get()->sum('montant');
         if ($classes->isEmpty()) {
             $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ Aucune classe trouvée pour l'année scolaire sélectionnée.</div>";
             return redirect()->back()->with('mil', $message);
@@ -31,7 +31,27 @@ class AnnuelController extends Controller
                 ->where('idclasse', $classe->id)
                 ->where('idanneescolaire', $annee)
                 ->get();
+             // --- 🎄 Traitement table NOEL
+            $noelData = DB::table('NOEL')
+                ->join('inscriptions', 'NOEL.matricule', '=', 'inscriptions.Matricule')
+                ->where('inscriptions.idclasse', $classe->id)
+                ->where('NOEL.annee', $annee)
+                ->selectRaw('COUNT(*) as nombre, SUM(montant) as total')
+                ->first();
 
+            $classe->noel_nombre = $noelData->nombre ?? 0;
+            $classe->noel_total = $noelData->total ?? 0;
+
+            // --- 🏁 Traitement table CLOTURE
+            $clotureData = DB::table('CLOTURE')
+                ->join('inscriptions', 'CLOTURE.matricule', '=', 'inscriptions.Matricule')
+                ->where('inscriptions.idclasse', $classe->id)
+                ->where('CLOTURE.annee', $annee)
+                ->selectRaw('COUNT(*) as nombre, SUM(montant) as total')
+                ->first();
+
+            $classe->cloture_nombre = $clotureData->nombre ?? 0;
+            $classe->cloture_total = $clotureData->total ?? 0;
             // Initialisation des compteurs
             $classe->ajours = 0;
             $classe->nonajours = 0;
@@ -101,14 +121,24 @@ class AnnuelController extends Controller
         foreach ($cantinesByClasse as $classe) {
             $cantinetotal += $classe->totalcantine;
         }
+        $total_noel = 0;
+        $total_cloture = 0;
+
+        foreach ($classesWithInscriptions as $classe) {
+            $total_noel += $classe->noel_total;
+            $total_cloture += $classe->cloture_total;
+        }
         return view('annuel.index')->with([
             'cantinetotal' => $cantinetotal,
             "classesWithInscriptions" => $classesWithInscriptions,
             "cantinesByClasse" => $cantinesByClasse,
             "letotaldesinscription" => $letotaldesinscription,
             "letotaldesversement" => $letotaldesversement,
+            'total_noel' => $total_noel,
+            'total_cloture' => $total_cloture,
             "rub" => $rub,
-            "srub" => $srub
+            "srub" => $srub,
+            'ape' => $ape,
         ]);
     }
 

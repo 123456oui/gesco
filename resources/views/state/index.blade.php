@@ -90,6 +90,8 @@
         </table>
     </div>
 </div>
+ <input type="hidden" name="rub" value="{{ $rub }}">
+                                         <input type="hidden" name="srub" value="{{ $srub }}">
 </form>
 <br>
     {{-- <a href="/exportExcelCause" >
@@ -154,7 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
             ];
 
             function openAndPrintSequentially(urls, index = 0) {
-                if (index >= urls.length) {
+                if (index >= urls.length) 
+                {
                     window.location.href = "{{ url('state/' . $rub . '/' . $srub) }}";
                     return;
                 }

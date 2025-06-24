@@ -7,7 +7,9 @@ use App\Http\Controllers\INSCRIPTION\EController;
 use App\Http\Controllers\Params\ProfilController;
 use App\Http\Controllers\Params\ActionController;
 use App\Http\Controllers\Params\MenuController;
+use App\Http\Controllers\Params\PersonnelController;
 use App\Http\Controllers\Params\AnneeController;
+use App\Http\Controllers\Reglement\ImpayeController;
 use App\Http\Controllers\Params\UserController;
 use App\Http\Controllers\Params\CycleController;
 use App\Http\Controllers\Params\NiveauController;
@@ -68,6 +70,12 @@ Route::get('menu/create/{rub}/{srub}',[MenuController::class,'create']);
 Route::get('menu/{id}/edit/{rub}/{srub}',[MenuController::class,'edit']);
 
 
+Route::resource('personnel',PersonnelController::class);
+Route::post('personnel',[PersonnelController::class,'store'])->name('personnel.store');
+Route::get('personnel/{rub}/{srub}',[PersonnelController::class,'index']);
+Route::get('personnel/create/{rub}/{srub}',[PersonnelController::class,'create']);
+Route::get('personnel/{id}/edit/{rub}/{srub}',[PersonnelController::class,'edit']);
+
 Route::resource('Eleve',EleveController::class);
 Route::post('Eleve/store/{rub}/{srub}',[EleveController::class,'store'])->name('Eleve.store');
 Route::get('Eleve/{rub}/{srub}',[EleveController::class,'index']);
@@ -107,6 +115,14 @@ Route::get('banque/{id}/edit/{rub}/{srub}',[BanqueController::class,'edit']);
 Route::resource('annuel',AnnuelController::class);
 Route::get('annuel/{rub}/{srub}',[AnnuelController::class,'index']);
 
+
+Route::resource('impaye',ImpayeController::class);
+Route::get('impaye/{rub}/{srub}',[ImpayeController::class,'index']);
+Route::post('/impaye/rechercher', [ImpayeController::class, 'rechercher'])->name('impaye.rechercher');
+Route::post('/impayes/imprimer', [ImpayeController::class, 'imprimer'])->name('impayes.imprimer');
+
+
+
 Route::resource('bversement',VbanqueController::class);
 Route::get('bversement/{rub}/{srub}',[VbanqueController::class,'index']);
 Route::get('bversement/create/{rub}/{srub}',[VbanqueController::class,'create']);
@@ -135,9 +151,13 @@ Route::get('classe/{id}/edit/{rub}/{srub}',[ClasseController::class,'edit']);
 
 Route::resource('Scolarite',ScolariteController::class);
 Route::post('Scolarite',[ScolariteController::class,'store'])->name('scolarite.store');
+Route::post('Noel',[ScolariteController::class,'noelstore'])->name('scolarite.storenoel');
+Route::post('Cloture',[ScolariteController::class,'cloturestore'])->name('scolarite.storecloture');
 Route::get('Scolarite/{rub}/{srub}',[ScolariteController::class,'index']);
 Route::get('Scolarite/create/{rub}/{srub}',[ScolariteController::class,'create']);
-Route::get('Scolarite/{id}/edit/{rub}/{srub}',[ScolariteController::class,'edit']);
+Route::get('Scolarite/{id}/edit/{rub}/{srub}',[ScolariteController::class,'edit'])->name('scolarite.edit');
+Route::get('Scolarite/{id}/noel/{rub}/{srub}',[ScolariteController::class,'noel'])->name('scolarite.noel');
+Route::get('Scolarite/{id}/cloture/{rub}/{srub}',[ScolariteController::class,'cloture'])->name('scolarite.cloture');
 
 Route::resource('intendance',IntendanceController::class);
 Route::get('intendance/{rub}/{srub}',[IntendanceController::class,'index']);

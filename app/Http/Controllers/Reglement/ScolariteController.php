@@ -111,9 +111,16 @@ class ScolariteController extends Controller
         $rub = $request->input('rub');
         $srub = $request->input('srub');
         $annee = session('annee'); 
+        $matricule = $request->input('matricule');
         $reglements = Reglement::where('id_eleve', $request->input('matricule'))
             ->where('annee', $annee)
             ->get();
+        if ($reglements->isEmpty()) {
+            $vers = $request->input('versement');
+            if($vers < 5000){
+                return redirect()->back()->with('error', 'Veillez entrer une somme superieur ou egal a 5000 franc cfa a raison de l APE au premier versement  ');
+            }
+        }
 
         // 4. Somme des montants réglés
         $total_regle = $reglements->sum('montant')+ $request->input('versement');
@@ -139,6 +146,15 @@ class ScolariteController extends Controller
                         'annee' => $annee,
                         'ticketbanque' => $ticketPath,
                     ]);
+                    
+                    if ($reglements->isEmpty()) {
+                        //crrer l ape .
+                        \DB::table('APE')->insert([
+                        'matricule' => $matricule,
+                        'montant' => 5000,
+                        'annee' => $annee
+                    ]);
+                    }
                     //$reglement ->save();
                     //
                     return redirect()->route('Scolarite.recu', ['id' => $reglement->id,
@@ -172,10 +188,77 @@ class ScolariteController extends Controller
         //
     }
 
+       public function noel(string $id, string $rub, string $srub)
+    {
+        //
+        $annee = session('annee');
+        $noel= DB::table('NOEL')
+        ->where('matricule', $id)
+        ->where('annee', $annee)
+        ->first();
+        if (!$noel) {
+           return view('Scolarite.noel', compact( 'rub', 'srub','id'));
+        }
+        else {
+            return redirect()->back()->with('error', 'cette eleve a deja regler sa facture de noel pour cette annee');
+        }
+    }
+
+        public function cloture(string $id, string $rub, string $srub)
+    {
+        //
+        $annee = session('annee');
+        $cloture= DB::table('CLOTURE')
+        ->where('matricule', $id)
+        ->where('annee', $annee)
+        ->first();
+        if (!$cloture) {
+           return view('Scolarite.cloture', compact( 'rub', 'srub','id'));
+        }
+        else {
+            return redirect()->back()->with('error', 'cette eleve a deja regler sa facture de cloture pour cette annee');
+        }
+    }
+
+    public function noelstore( Request $request) {
+        $annee=session('annee');
+        $matricule=$request->input('matricule');
+        $rub=$request->input('rub');
+        $srub=$request->input('srub');
+        $montant=$request->input('montant');
+        \DB::table('NOEL')->insert([
+                        'matricule' => $matricule,
+                        'montant' => $montant,
+                        'annee' => $annee
+                    ]);
+        return redirect()->route('scolarite.edit', [
+        'id' => $matricule,
+        'rub' => $rub,
+        'srub' => $srub
+    ])->with('success', 'Montant Noël enregistré avec succès.');
+    }
+     public function cloturestore( Request $request) {
+        $annee=session('annee');
+        $matricule=$request->input('matricule');
+        $rub=$request->input('rub');
+        $srub=$request->input('srub');
+        $montant=$request->input('montant');
+        \DB::table('CLOTURE')->insert([
+                        'matricule' => $matricule,
+                        'montant' => $montant,
+                        'annee' => $annee
+                    ]);
+        return redirect()->route('scolarite.edit', [
+        'id' => $matricule,
+        'rub' => $rub,
+        'srub' => $srub
+    ])->with('success', 'Montant Cloture enregistré avec succès.');
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id,string $rub, string $srub)
     {
         //
         $annee = session('annee'); 
@@ -206,7 +289,7 @@ class ScolariteController extends Controller
         $reste = $montant_total - $total_regle;
         
 
-        return view('Scolarite.edit', compact('eleve', 'inscription', 'reglements', 'total_regle', 'reste'));
+        return view('Scolarite.edit', compact('eleve', 'inscription', 'reglements', 'total_regle', 'reste', 'rub', 'srub'));
 
     }
 
@@ -286,10 +369,20 @@ public function recu (Request $request,$id)
     ->where('id_eleve', $reglement->eleve->Matricule)
     ->with('eleve', 'banque')
     ->get();
+
     $montantTotalAutres = $autresReglements->sum('montant')+$reglement->montant ;
     $rest=$inscription->montantscolariteE - $montantTotalAutres;
-    return view('Scolarite.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest' ));
+    $lettres=$this->afficher($reglement->montant);
+    $ape=$reglement->montant-5000;
+    $apelettre=$this->afficher($ape);
+    return view('Scolarite.recu', compact('reglement', 'rub', 'srub','classe','autresReglements','montantTotalAutres','rest','lettres','ape', 'apelettre'));
 }
-
+public function afficher(  $nombre)
+    {
+        $numberToWords = new NumberToWords();
+        $transformer = $numberToWords->getNumberTransformer('fr');
+        $lettres = $transformer->toWords($nombre);
+        return $lettres;
+    }
 
 }

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-4 ">
-
+    
     {{-- ✅ Partie 1 : Alerte selon la scolarité --}}
     <div class="mb-4" id="info-section">
         @if (0 >= $total)
@@ -105,7 +105,8 @@
             <i class="fas fa-print me-1"></i> Imprimer la carte scolaire
         </button>
     </div>
-
+<input type="hidden" name="rub" value="{{ $rub }}">
+<input type="hidden" name="srub" value="{{ $srub }}">
 </div>
 
 <script>
