@@ -25,7 +25,7 @@
 
                 {{-- ✅ Image gauche --}}
                 <div class="flex-shrink-0" style="width: 80px;">
-                    <img src="{{ asset('/images/logo.png') }}" alt="Logo gauche" style="height: 100px;">
+                    <img src="{{ asset('/images/armoirie2.png') }}" alt="Logo gauche" style="height: 100px;">
                 </div>
 
                 {{-- ✅ Texte central (utilise flex-grow pour centrer automatiquement) --}}

@@ -159,3 +159,66 @@ function reinitialiser(){
 }
 
 reinitialiser();
+
+function showSelectioneEdite(selectElement) 
+{
+    const cycleId = selectElement.value; // Récupérer la valeur sélectionnée
+    // Construire l'URL de l'API avec les paramètres
+    
+    const url = `/cyclebyId/?cycleId=${cycleId}`;
+    console.log(url);
+    // Effectuer la requête fetch
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur réseau: ${response.status} - ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+               var niv = [];
+                data.niveaux.forEach(item => {
+                    niv[item.id] =item.libelleniveau;
+                });
+                var niveau="niveau";
+                populateniveau(niv,niveau);
+            } else {
+                console.error('Erreur dans la réponse:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données:', error);
+        });
+}
+function showclasseEdite(selectElement) 
+{
+ 
+    const niveauId = selectElement.value; // Récupérer la valeur sélectionnée
+    // Construire l'URL de l'API avec les paramètres
+   
+    const url = `/niveaubyid/?niveauId=${niveauId}`;
+    // Effectuer la requête fetch
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur réseau: ${response.status} - ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+               var classe = [];
+                data.classes.forEach(item => {
+                    classe[item.id] =item.libelleclasse;
+                });
+                var niveau="classe";
+                populateniveau(classe,niveau);
+            } else {
+                console.error('Erreur dans la réponse:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données:', error);
+        });
+}

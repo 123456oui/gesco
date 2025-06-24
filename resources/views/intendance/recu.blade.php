@@ -85,14 +85,14 @@
     <hr>
     <div class="logos" id="logos">
         <div class="logo1">
-            <img src="{{ asset('images/favicon.png') }}" alt="Logo 1">
+            <img src="{{ asset('images/armoirie2.png') }}" alt="Logo 1">
         </div>
         <div class="logo2">
             <img src="{{ asset('images/favicon.png') }}" alt="Logo 2">
         </div>
     </div>
     <div class="etablissement mt-2 mb-2">
-            <h5 class="text-center" > NOM DE L ETABLISEMENT </h5>
+            <h5 class="text-center" > ELITE PLUS </h5>
     </div>
     <div class="infosniveau">
         

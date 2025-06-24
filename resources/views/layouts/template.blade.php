@@ -356,6 +356,8 @@
         <script src="{{ asset('js/scriptAjax.js') }}"></script>
         <script src="{{ asset('js/sigobs.js') }}"></script>
         <script src="{{ asset('leaflet/leaflet.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
