@@ -477,7 +477,21 @@ const photoDropzone = new Dropzone("#bulletin-dropzone", {
 
 </script>
 
-
+@if(session('swal'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'warning',
+                html: `{!! session('swal') !!}`,
+                width: 500,
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'shadow-lg rounded-4'
+                }
+            });
+        });
+    </script>
+@endif
 @endpush
 
 @endsection

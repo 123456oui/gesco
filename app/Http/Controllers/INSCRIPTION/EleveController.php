@@ -82,6 +82,14 @@ class EleveController extends Controller
      */
     public function store(Request $request)
     {
+        $annee = session('annee');
+        $existe = DB::table('anneecloture')
+        ->where('libelle', $annee)
+        ->exists();
+        if ($existe) {
+            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ L'année scolaire est déjà clôturée. Aucune inscription n'est possible.</div>";
+            return redirect()->back()->with('swal', $message);
+        }
         $validated = $request->validate([
             'Etaorigine' => 'nullable',
             'numactenais' => 'required|string|max:255',
@@ -105,7 +113,7 @@ class EleveController extends Controller
             'photo_identite' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
         $classe=$request->input('niveau');
-        $annee = session('annee');
+        
         $userid= session('user')->id;
         $niveau = Niveau::where('id', $classe)
                 ->where('annee', $annee)

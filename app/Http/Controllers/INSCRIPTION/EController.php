@@ -63,6 +63,15 @@ class EController extends Controller
     {
 
         $annee = session('annee');
+        $existe = DB::table('anneecloture')
+        ->where('libelle', $annee)
+        ->exists();
+        if ($existe) {
+            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ L'année scolaire est déjà clôturée. Aucune inscription n'est possible.</div>";
+            return redirect()->back()->with('swal', $message);
+        }
+
+
         $matricule = $request->input('Matricule');
         $class = $request->input('classe');
         $classe=DB::table('classes')

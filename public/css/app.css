@@ -65089,6 +65089,14 @@ readers do not read off random characters that represent icons */
     width:70%;
     height: auto;
 }
+
+.armoirieimg2 {
+    display: block;
+    margin-left: auto;
+    margin-right:auto;
+    width:37%;
+    height: auto;
+}
 .nameuser{
     color:#fff;
 }

@@ -105,13 +105,15 @@ class NiveauController extends Controller
 public function niveauclasse(Request $request, $rub,$srub){
     $niveauId=$request->get( 'niveauId') ;
 
-      
+    $annee=session('annee');
        if ($niveauId) {
          $niveau = Niveau::find($niveauId);
         $scolarite=$niveau->Montantscolarite; 
        
         
-        $classes=Classe::where('idniveau', $niveauId)->get();
+        $classes=Classe::where('idniveau', $niveauId)
+        ->where('annee', $annee)
+        ->get();
         return response()->json(["success"  =>true,"classes"=>$classes  ,"scolarite"=>$scolarite]);
     }
 

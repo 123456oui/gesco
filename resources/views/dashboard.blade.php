@@ -7,15 +7,20 @@
     </h2>
 </x-slot>
 
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                {{ __("You're logged in!") }}
-            </div>
-        </div>
+<div class="py-12 flex justify-center items-center">
+  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 w-full max-w-3xl relative rounded-lg overflow-hidden shadow-sm bg-white">
+    <div class="absolute bottom-4 left-0 w-full px-4">
+      <marquee behavior="scroll" direction="left" scrollamount="6"
+               class=" text-white text-lg font-bold py-2 px-4 rounded shadow-lg" 
+               style="background-color:rgba(236, 67, 143, 0.8); width: 100%;">
+        Elite Plus : Groupe scolaire Maternel, Primaire, Secondaire
+      </marquee>
     </div>
+    <img src="{{ asset('images/logo.png') }}" alt="Image Unique"
+         class="armoirieimg2" />
+  </div>
 </div>
+
 
 <!-- Overlay -->
 @if (!session()->has('annee'))
