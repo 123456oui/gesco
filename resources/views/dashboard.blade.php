@@ -7,20 +7,83 @@
     </h2>
 </x-slot>
 
-<div class="py-12 flex justify-center items-center">
-  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 w-full max-w-3xl relative rounded-lg overflow-hidden shadow-sm bg-white">
-    <div class="absolute bottom-4 left-0 w-full px-4">
+<div class="py-12">
+  <div class="container">
+    <!-- Marquee -->
+    <div class="position-relative mb-5">
       <marquee behavior="scroll" direction="left" scrollamount="6"
-               class=" text-white text-lg font-bold py-2 px-4 rounded shadow-lg" 
+               class="text-white text-lg font-bold py-2 px-4 rounded shadow-lg text-center"
                style="background-color:rgba(236, 67, 143, 0.8); width: 100%;">
         Elite Plus : Groupe scolaire Maternel, Primaire, Secondaire
       </marquee>
     </div>
-    
-  </div>
+
+    <!-- Cards -->
+    <div class="row justify-content-center text-center">
+    <!-- Total Élèves -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow border-0 py-2">
+            <div class="card-body d-flex flex-column align-items-center p-2">
+                <div class="text-primary mb-2">
+                    <i class="fas fa-user-graduate fa-4x"></i>
+                </div>
+                <h1 class="fw-bold text-dark mb-1">{{ $eleves ?? 0 }}</h1>
+                <p class="text-muted mb-0">Total Élèves</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inscrits cette année -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow border-0 py-2">
+            <div class="card-body d-flex flex-column align-items-center p-2">
+                <div class="text-success mb-2">
+                    <i class="fas fa-user-check fa-4x"></i>
+                </div>
+                <h1 class="fw-bold text-dark mb-1">{{ $inscription ?? 0 }} </h1>
+                <p class="text-muted mb-0">Inscrits ({{ session('annee') ?? '' }})</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nombre de classes -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow border-0 py-2">
+            <div class="card-body d-flex flex-column align-items-center p-2">
+                <div class="text-warning mb-2">
+                    <i class="fas fa-chalkboard-teacher fa-4x"></i>
+                </div>
+                <h1 class="fw-bold text-dark mb-1">{{ $classes ?? 0 }}</h1>
+                <p class="text-muted mb-0">Classes ({{ session('annee') ?? '' }})</p>
+            </div>
+        </div>
+    </div>
+     <div class="col-md-4 mb-3">
+        <div class="card shadow border-0 py-2">
+            <div class="card-body d-flex flex-column align-items-center p-2">
+                <div class="text-primary mb-2">
+                    <i class="fas fa-users fa-4x"></i>
+                </div>
+                <h1 class="fw-bold text-dark mb-1">{{ $Utilisateurs ?? 0 }}</h1>
+                <p class="text-muted mb-0">Utilisateurs</p>
+            </div>
+        </div>
+    </div>
+     <div class="col-md-4 mb-3">
+        <div class="card shadow border-0 py-2">
+            <div class="card-body d-flex flex-column align-items-center p-2">
+                <div class="text-warning mb-2">
+                    <i class=" fas fa-users-gear fa-4x"></i>
+                </div>
+                <h1 class="fw-bold text-dark mb-1">{{ $profils ?? 0 }}</h1>
+                <p class="text-muted mb-0">Profils</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-
+  </div>
+</div>
 <!-- Overlay -->
 @if (!session()->has('annee'))
 <!-- Overlay -->

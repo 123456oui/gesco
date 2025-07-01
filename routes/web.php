@@ -22,6 +22,8 @@ use App\Http\Controllers\Params\GenrepersoController;
 use App\Http\Controllers\Params\RetenueController;
 use App\Http\Controllers\Params\TypepersoController;
 use App\Http\Controllers\Reglement\ScolariteController;
+use App\Http\Controllers\Reglement\ApeController;
+use App\Http\Controllers\Reglement\CantanneController;
 use App\Http\Controllers\Reglement\IntendanceController;
 use App\Http\Controllers\Reglement\StateControler;
 use App\Http\Controllers\Reglement\CantineController;
@@ -47,6 +49,21 @@ Route::get('/', function () {
 Route::get('/',[WelcomeController::class,'welcome']);
 
 Route::get('/dashboard', function () {
+    if (session()->has('annee')) {
+       $annee=session('annee');
+        $eleves=DB::table('eleves')->get()->count();
+        $inscription=DB::table('inscriptions')->where('idanneescolaire',$annee)->get()->count();
+        $classes=DB::table('classes')->where('annee',$annee)->get()->count();
+        $profils=DB::table('profils')->get()->count();
+        $Utilisateurs= DB::table('users')->get()->count();
+        return view('dashboard')->with([
+            'eleves' => $eleves,
+            'inscription' => $inscription,
+            'classes' => $classes,
+            'profils' => $profils,
+            'Utilisateurs' => $Utilisateurs
+        ]);
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -74,6 +91,21 @@ Route::post('menu',[MenuController::class,'store'])->name('menu.store');
 Route::get('menu/{rub}/{srub}',[MenuController::class,'index']);
 Route::get('menu/create/{rub}/{srub}',[MenuController::class,'create']);
 Route::get('menu/{id}/edit/{rub}/{srub}',[MenuController::class,'edit']);
+
+Route::resource('ape',ApeController::class);
+Route::post('ape',[ApeController::class,'store'])->name('ape.store');
+Route::get('ape/{rub}/{srub}',[ApeController::class,'index']);
+Route::post('/ape/imprimer', [ApeController::class, 'imprimer'])->name('ape.imprimer');
+Route::get('ape/create/{rub}/{srub}',[ApeController::class,'create']);
+Route::get('ape/edit/{rub}/{srub}', [ApeController::class, 'edit'])->name('ape.edit');
+
+Route::resource('cantanne',CantanneController::class);
+Route::post('cantanne',[CantanneController::class,'store'])->name('cantanne.store');
+Route::get('cantanne/{rub}/{srub}',[CantanneController::class,'index']);
+Route::post('/cantanne/imprimer', [CantanneController::class, 'imprimer'])->name('cantanne.imprimer');
+Route::get('cantanne/create/{rub}/{srub}',[CantanneController::class,'create']);
+Route::get('cantanne/edit/{rub}/{srub}', [CantanneController::class, 'edit'])->name('cantanne.edit');
+
 
 
 Route::resource('personnel',PersonnelController::class);
