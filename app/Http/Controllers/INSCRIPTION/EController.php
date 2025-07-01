@@ -67,7 +67,7 @@ class EController extends Controller
         ->where('libelle', $annee)
         ->exists();
         if ($existe) {
-            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ L'année scolaire est déjà clôturée. Aucune inscription n'est possible.</div>";
+            $message = "<div style='font-size:18px; color:#d35400; font-weight:bold; margin-bottom:10px;'>⚠️ L'année scolaire est déjà clôturée. Aucune reinscription n'est possible en cette année $annee.</div>";
             return redirect()->back()->with('swal', $message);
         }
 

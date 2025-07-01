@@ -16,8 +16,7 @@
         Elite Plus : Groupe scolaire Maternel, Primaire, Secondaire
       </marquee>
     </div>
-    <img src="{{ asset('images/logo.png') }}" alt="Image Unique"
-         class="armoirieimg2" />
+    
   </div>
 </div>
 
