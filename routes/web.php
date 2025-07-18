@@ -302,4 +302,5 @@ Route::get('/classes-par-niveau/{id}', [EleveController::class, 'classesParNivea
 Route::get('/get-eleve/{matricule}', [ScolariteController::class, 'getEleve']);
 Route::get('/reglements/recu/{id}', [ScolariteController::class, 'recu'])->name('Scolarite.recu');
 Route::get('/reglement/recu/{id}', [IntendanceController::class, 'recu'])->name('intendance.recu');
+Route::get('/get-classes/{niveau}', [LclotureController::class, 'getClasses'])->name('get.classes');
 

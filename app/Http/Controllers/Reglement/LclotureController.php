@@ -31,8 +31,12 @@ class LclotureController extends Controller
      */
     public function index($rub , $srub)
     {
-        return view('ape.index')->with(['controler'=>$this,'rub'=>$rub,'srub'=>$srub]);
+        $annee=session('annee');
+        $classes=DB::table('classes')->where('Annee',$annee)->get();
+        $niveaux=DB::table('niveaux')->where('annee',$annee)->get();
+        return view('lcloture.index')->with(['controler'=>$this,'rub'=>$rub,'srub'=>$srub,'classes'=>$classes,'niveaux'=>$niveaux]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -43,7 +47,7 @@ class LclotureController extends Controller
     {
         $menuParent=Menu::all();//where('parent_id',Null)->get();
         $actions=Action::all();
-        return view('ape.create')->with(['parents'=>$menuParent,'actions'=>$actions,"rub"=>$rub,"srub"=>$srub]);
+        return view('lcloture.create')->with(['parents'=>$menuParent,'actions'=>$actions,"rub"=>$rub,"srub"=>$srub]);
     }
 
     /**
@@ -68,7 +72,7 @@ class LclotureController extends Controller
         $menu->save();
         $this->saveMenuAction($menu->id,$request);
         //dd($this);
-        return redirect('ape/'.$request->input('rub').'/'.$request->input('srub'))->with(['success'=>$this->operation]);
+        return redirect('lcloture/'.$request->input('rub').'/'.$request->input('srub'))->with(['success'=>$this->operation]);
     }
 
     /**
@@ -89,52 +93,88 @@ class LclotureController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($rub, $srub, Request $request)
+
+    {
+        $classe = $request->input('classe');
+        $niveau = $request->input('niveau');
+        $annee = session('annee');
+        $rub = $request->input('rub');
+        $srub = $request->input('srub');
+    
+        // 🔍 Récupérer les élèves ayant un enregistrement dans NOEL
+        $elevesNoel = DB::table('CLOTURE')
+            ->join('eleves', 'CLOTURE.matricule', '=', 'eleves.Matricule')
+            ->join('inscriptions', function($join) use ($annee, $classe) {
+                $join->on('inscriptions.Matricule', '=', 'eleves.Matricule')
+                     ->where('inscriptions.idanneescolaire', '=', $annee)
+                     ->where('inscriptions.idclasse', '=', $classe)
+;            })
+            ->select(
+                'eleves.Matricule',
+                'eleves.Nom',
+                'eleves.Prenom',
+                'CLOTURE.montant as montant_noel'
+            )
+            ->where('CLOTURE.annee', $annee)
+            ->orderBy('eleves.Matricule')
+            ->get();
+        // 💰 Récupérer les règlements par matricule
+        $reglementsParMatricule = DB::table('reglements')
+            ->select('id_eleve', DB::raw('SUM(montant) as total'))
+            ->where('annee', $annee)
+            ->groupBy('id_eleve')
+            ->get()
+            ->keyBy('id_eleve'); // Pour accès rapide par matricule
+    
+        // 🧩 Fusionner les données
+        $elevesAvecReglements = $elevesNoel->map(function ($eleve) use ($reglementsParMatricule) {
+            $matricule = $eleve->Matricule;
+            $eleve->total_reglement = $reglementsParMatricule[$matricule]->total ?? 0;
+            return $eleve;
+        });
+    
+        return view('lcloture.edit')->with([
+            'reglementsParMatricule' => $elevesAvecReglements,
+            'rub' => $rub,
+            'srub' => $srub,
+            'classe' => $classe,
+            'niveau' => $niveau,
+        ]);
+    
+    }
+
+
+    public function imprimer(Request $request)
+    {
+        $annee = session('annee');
+        $niveau = $request->input('niveau');
+        $classe = $request->input('classe');
+        $classes=DB::table('classes')->where('Annee',$annee)->where('id',$classe)->first();
+        $rub = $request->input('rub');
+        $srub = $request->input('srub');
+        $total = $request->input('total');
+        $eleves = json_decode($request->input('eleves_json'));
+        $eleves = collect(json_decode($request->input('eleves_json')));
+        // Tu peux aussi retrouver le nom de la classe pour affichage
+    
+        return view('lcloture.create', [
+            'eleves' => $eleves,
+            'niveau' => $niveau,
+            'classe' => $classes->libelleclasse,
+            'rub' => $rub,
+            'srub' => $srub,
+            'total' => $total,
+        ]);
+    
+    }
+    public function getClasses($niveau)
 {
-    $dateDebut = $request->input('datedebut');
-    $dateFin = $request->input('datefin');
-    $annee=session('annee');
-    // Récupérer la somme des montants par élève avec info élève
-    $reglementsParMatricule = DB::table('reglements')
-        ->join('eleves', 'reglements.id_eleve', '=', 'eleves.Matricule')
-        ->select(
-            'reglements.id_eleve',
-            DB::raw('SUM(reglements.montant) as total'),
-            'eleves.Matricule',
-            'eleves.Nom',
-            'eleves.Prenom'
-        )->where('reglements.annee', $annee)
-        ->whereBetween('reglements.created_at', [$dateDebut, $dateFin])
-        ->groupBy('reglements.id_eleve', 'eleves.Matricule', 'eleves.Nom', 'eleves.Prenom')
-        ->orderBy('eleves.Matricule')
+    $classes = DB::table('classes')
+        ->where('idniveau', $niveau)
+        ->orderBy('libelleclasse')
         ->get();
-    return view('ape.edit')->with([
-        'reglementsParMatricule' => $reglementsParMatricule,
-        'rub' => $rub,
-        'srub' => $srub,
-        'dateDebut' => $dateDebut,
-        'dateFin' => $dateFin,
-    ]);
-}
 
-public function imprimer(Request $request)
-{
-    $dateDebut = $request->input('datedebut');
-    $dateFin = $request->input('datefin');
-    $rub = $request->input('rub');
-    $srub = $request->input('srub');
-    $total = $request->input('total');
-    $eleves = json_decode($request->input('eleves_json'));
-    // Tu peux aussi retrouver le nom de la classe pour affichage
-
-    return view('ape.create', [
-        'eleves' => $eleves,
-        'dateDebut' => $dateDebut,
-        'dateFin' => $dateFin,
-        'rub' => $rub,
-        'srub' => $srub,
-        'total' => $total,
-    ]);
-
+    return response()->json($classes);
 }
     /**
      * Update the specified resource in storage.

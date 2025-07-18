@@ -23,7 +23,7 @@
                             <label for="niveau" class="form-label">
                                 {{ __('Niveau :') }} <span class="text-danger">*</span>
                             </label>
-                            <select name="niveau" id="niveau" class="form-control @error('niveau') is-invalid @enderror" required>
+                            <select name="niveau" id="niveau" class="form-control @error('niveau') is-invalid @enderror"  onchange="filtrerClassesParNiveau(this.value)">
                                 <option value="">-- Sélectionner le niveau --</option>
                                 @foreach($niveaux as $niveau)
                                     <option value="{{ $niveau->id }}" {{ old('niveau') == $niveau->id ? 'selected' : '' }}>{{ $niveau->libelleniveau }}</option>
@@ -55,4 +55,32 @@
         </div>
     </div>
 </div>
+
+<script>
+function filtrerClassesParNiveau(niveauId) {
+    const classeSelect = document.getElementById('classe');
+    classeSelect.innerHTML = '<option value="">-- Chargement... --</option>';
+
+    if (!niveauId) {
+        classeSelect.innerHTML = '<option value="">-- Sélectionner la classe --</option>';
+        return;
+    }
+
+    fetch(`/get-classes/${niveauId}`)
+        .then(response => response.json())
+        .then(data => {
+            classeSelect.innerHTML = '<option value="">-- Sélectionner la classe --</option>';
+            data.forEach(classe => {
+                const option = document.createElement('option');
+                option.value = classe.id;
+                option.textContent = classe.libelleclasse;
+                classeSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des classes :', error);
+            classeSelect.innerHTML = '<option value="">-- Erreur de chargement --</option>';
+        });
+}
+</script>
 @endsection

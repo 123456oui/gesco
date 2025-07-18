@@ -45,35 +45,33 @@
 @endsection
 
 @section('content')
-    <div id="print-section" class="container mt-4">
-        <h3 class="text-center mb-4">
-            Liste des élèves pour APE du 
-            <strong>{{ \Carbon\Carbon::parse($dateDebut)->translatedFormat('j F Y') }}</strong> au 
-            <strong>{{ \Carbon\Carbon::parse($dateFin)->translatedFormat('j F Y') }}</strong>
-        </h3>
+<div id="print-section" class="container mt-4">
+    <h3 class="text-center mb-4">
+        Liste des élèves cloture – Niveau : <strong>{{ $niveau }}</strong>, Classe : <strong>{{ $classe }}</strong>
+    </h3>
 
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Matricule</th>
+                <th>Nom complet</th>
+                <th>Montant cloture</th>
+                <th>Scolarité versée</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($eleves as $eleve)
                 <tr>
-                    <th>Matricule</th>
-                    <th>Nom complet</th>
-                    <th>Scolarite payé</th>
-                    <th>Montant APE</th>
+                    <td>{{ $eleve->Matricule }}</td>
+                    <td>{{ $eleve->Nom }} {{ $eleve->Prenom }}</td>
+                    <td>{{ number_format($eleve->montant_noel, 0, ',', ' ') }} F</td>
+                    <td>{{ number_format($eleve->total_reglement, 0, ',', ' ') }} F</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($eleves as $eleve)
-                    <tr>
-                       <td>{{ $eleve->Matricule }}</td>
-                        <td>{{ $eleve->Nom }} {{ $eleve->Prenom }}</td>
-                        <td>{{ number_format($eleve->total, 0, ',', ' ') }} F</td>
-                        <td>{{ number_format(5000, 0, ',', ' ') }} F</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <p class="text-muted">Total APE : {{ $total }} F</p>
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+    <p class="text-muted">Total cloture : {{ number_format($eleves->sum('montant_noel'), 0, ',', ' ') }} F</p>
+</div>
 
 <script>
 window.onload = function () {
@@ -81,7 +79,6 @@ window.onload = function () {
         const recu = document.getElementById("print-section");
         if (!recu) return;
 
-        // Récupère tous les styles (y compris le style simple ci-dessus)
         const styles = [...document.querySelectorAll('style')]
             .map(tag => tag.outerHTML)
             .join("");
@@ -91,7 +88,7 @@ window.onload = function () {
         printWindow.document.write(`
             <html>
                 <head>
-                    <title>Impression</title>
+                    <title>Impression Noël</title>
                     ${styles}
                     <style>
                         @page { size: auto; margin: 0; }
@@ -105,18 +102,18 @@ window.onload = function () {
         `);
         printWindow.document.close();
 
+        // ✅ Définir onafterprint AVANT print()
+        printWindow.onafterprint = function () {
+            printWindow.close();
+            window.location.href = "{{ url('lcloture/' . ($rub ?? '') . '/' . ($srub ?? '')) }}";
+        };
+
+        // ✅ Lancer l’impression
         printWindow.onload = function () {
             printWindow.focus();
             printWindow.print();
         };
-
-        setTimeout(function () {
-            printWindow.close();
-            window.location.href = "{{ url('ape/' . ($rub ?? '') . '/' . ($srub ?? '')) }}";
-        }, 2000);
     }, 1000);
 };
 </script>
 @endsection
-
-
