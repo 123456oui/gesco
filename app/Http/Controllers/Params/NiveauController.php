@@ -88,7 +88,17 @@ class NiveauController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+             
+        
+       // $niveau->annee=session('annee');
+        $niveau = Niveau::find($id);
+        $niveau->libelleniveau=$request->input('niveau');
+        $niveau->Montantscolarite=$request->input('Montantscolarite');
+        $niveau->idcycle=$request->input('cycle');
+        $niveau->save();
+
+        return redirect('niveau/'.$request->input('rub').'/'.$request->input('srub'))->with(['success'=>$this->operation]);
+    
     }
 
     /**
