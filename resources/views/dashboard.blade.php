@@ -58,28 +58,7 @@
             </div>
         </div>
     </div>
-     <div class="col-md-4 mb-3">
-        <div class="card shadow border-0 py-2">
-            <div class="card-body d-flex flex-column align-items-center p-2">
-                <div class="text-primary mb-2">
-                    <i class="fas fa-users fa-4x"></i>
-                </div>
-                <h1 class="fw-bold text-dark mb-1">{{ $Utilisateurs ?? 0 }}</h1>
-                <p class="text-muted mb-0">Utilisateurs</p>
-            </div>
-        </div>
-    </div>
-     <div class="col-md-4 mb-3">
-        <div class="card shadow border-0 py-2">
-            <div class="card-body d-flex flex-column align-items-center p-2">
-                <div class="text-warning mb-2">
-                    <i class=" fas fa-users-gear fa-4x"></i>
-                </div>
-                <h1 class="fw-bold text-dark mb-1">{{ $profils ?? 0 }}</h1>
-                <p class="text-muted mb-0">Profils</p>
-            </div>
-        </div>
-    </div>
+     
 </div>
 
   </div>
