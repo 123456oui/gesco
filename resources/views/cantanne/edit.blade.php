@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="main-card card">
         <div class="card-header py-0 position-relative text-center">
-    <h4 class="w-100 m-0">{{ __('Liste des élèves impayés') }}</h4>
+    <h4 class="w-100 m-0">{{ __('Liste des élèves inscrits a la cantine') }}</h4>
 
     {{-- Bouton imprimer aligné à droite --}}
     <form action="{{ route('cantanne.imprimer') }}" method="POST"  style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">

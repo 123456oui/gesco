@@ -232,12 +232,32 @@ class ScolariteController extends Controller
                         'montant' => $montant,
                         'annee' => $annee
                     ]);
-        return redirect()->route('scolarite.edit', [
-        'id' => $matricule,
-        'rub' => $rub,
-        'srub' => $srub
-    ])->with('success', 'Montant Noël enregistré avec succès.');
+                    return redirect()->route('scolarite.arecu', [
+                        'matricule' => $matricule,
+                        'type' => 'NOEL',
+                        'rub' => $rub,
+                        'srub' => $srub,
+                    ])->with('success', 'Montant Noël enregistré avec succès.');
+                    
     }
+
+    public function arecu($matricule, $type,Request $request)
+{
+
+    $eleves = \DB::table('eleves')->where('matricule', $matricule)->first();
+    $eleves->Photo = !empty($eleves->Photo) ? asset('storage/' . $eleves->Photo) : '';
+    if($type == 'NOEL'){
+        $montant = \DB::table('NOEL')->where('matricule', $matricule)->where('annee', session('annee'))->value('montant');
+    }
+    else{
+        $montant = \DB::table('CLOTURE')->where('matricule', $matricule)->where('annee', session('annee'))->value('montant');
+    }
+    $rub = $request->input('rub');
+    $srub = $request->input('srub');
+    return view('Scolarite.arecu', compact('eleves', 'type', 'montant','rub','srub'));
+}
+
+
      public function cloturestore( Request $request) {
         $annee=session('annee');
         $matricule=$request->input('matricule');
@@ -249,11 +269,12 @@ class ScolariteController extends Controller
                         'montant' => $montant,
                         'annee' => $annee
                     ]);
-        return redirect()->route('scolarite.edit', [
-        'id' => $matricule,
-        'rub' => $rub,
-        'srub' => $srub
-    ])->with('success', 'Montant Cloture enregistré avec succès.');
+                    return redirect()->route('scolarite.arecu', [
+                        'matricule' => $matricule,
+                        'type' => 'CLOTURE',
+                        'rub' => $rub,
+                        'srub' => $srub,
+                    ])->with('success', 'Montant Noël enregistré avec succès.');
     }
 
     /**

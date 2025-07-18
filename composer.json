@@ -9,7 +9,7 @@
         "codedge/laravel-fpdf": "^1.12",
         "grofgraf/laravel-pdf-merger": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
-        "kwn/number-to-words": "^2.11",
+        "kwn/number-to-words": "^2.12",
         "laravel/fortify": "*",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.3",

@@ -36,9 +36,6 @@
         background: #e0e0e0;
         color: #333;
     }
-    .text-end {
-        text-align: right;
-    }
     .text-muted {
         color: #888 !important;
         text-align: right;
@@ -48,47 +45,33 @@
 @endsection
 
 @section('content')
-    <div id="print-section" class="container mt-4">
-        <h3 class="text-center mb-4">
-            Liste des élèves impayés - Classe : <strong>{{ $classe }}</strong> / Année : <strong>{{ $annee }}</strong>
-        </h3>
+<div id="print-section" class="container mt-4">
+    <h3 class="text-center mb-4">
+        Liste des élèves Noël – Niveau : <strong>{{ $niveau }}</strong>, Classe : <strong>{{ $classe }}</strong>
+    </h3>
 
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Matricule</th>
+                <th>Nom complet</th>
+                <th>Montant Noël</th>
+                <th>Scolarité versée</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($eleves as $eleve)
                 <tr>
-                    <th>Matricule</th>
-                    <th>Nom complet</th>
-                    <th>Montant dû</th>
-                    <th>Montant payé</th>
-                    <th>Reste</th>
+                    <td>{{ $eleve->Matricule }}</td>
+                    <td>{{ $eleve->Nom }} {{ $eleve->Prenom }}</td>
+                    <td>{{ number_format($eleve->montant_noel, 0, ',', ' ') }} F</td>
+                    <td>{{ number_format($eleve->total_reglement, 0, ',', ' ') }} F</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($eleves as $eleve)
-                    @php
-                        $montant_total = DB::table('inscriptions')
-                            ->where('Matricule', $eleve->Matricule)
-                            ->where('idanneescolaire', $annee)
-                            ->value('montantscolariteE') ?? 0;
-
-                        $montant_paye = DB::table('reglements')
-                            ->where('id_eleve', $eleve->Matricule)
-                            ->where('annee', $annee)
-                            ->sum('montant');
-
-                        $reste = $montant_total - $montant_paye;
-                    @endphp
-                    <tr>
-                        <td>{{ $eleve->Matricule }}</td>
-                        <td>{{ $eleve->Nom }} {{ $eleve->Prenom }}</td>
-                        <td class="text-end">{{ number_format($montant_total, 0, ',', ' ') }} F</td>
-                        <td class="text-end">{{ number_format($montant_paye, 0, ',', ' ') }} F</td>
-                        <td class="text-end" style="color: red"><strong>{{ number_format($reste, 0, ',', ' ') }} F</strong></td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+    <p class="text-muted">Total Noël : {{ number_format($eleves->sum('montant_noel'), 0, ',', ' ') }} F</p>
+</div>
 
 <script>
 window.onload = function () {
@@ -96,7 +79,6 @@ window.onload = function () {
         const recu = document.getElementById("print-section");
         if (!recu) return;
 
-        // Récupère tous les styles (y compris le style simple ci-dessus)
         const styles = [...document.querySelectorAll('style')]
             .map(tag => tag.outerHTML)
             .join("");
@@ -106,7 +88,7 @@ window.onload = function () {
         printWindow.document.write(`
             <html>
                 <head>
-                    <title>Impression</title>
+                    <title>Impression Noël</title>
                     ${styles}
                     <style>
                         @page { size: auto; margin: 0; }
@@ -127,11 +109,9 @@ window.onload = function () {
 
         setTimeout(function () {
             printWindow.close();
-            window.location.href = "{{ url('impaye/' . ($rub ?? '') . '/' . ($srub ?? '')) }}";
+            window.location.href = "{{ url('lnoel/' . ($rub ?? '') . '/' . ($srub ?? '')) }}";
         }, 2000);
     }, 1000);
 };
 </script>
 @endsection
-
-

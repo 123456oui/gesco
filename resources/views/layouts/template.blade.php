@@ -14,8 +14,8 @@
         <link rel="stylesheet" href="{{ asset('css/jquery.rtnotify.css') }}">
         <link rel="stylesheet" href="{{asset("css/sigobs.css")}}" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="icon" href="{{asset('images/favicon.png')}}" type="image/x-icon"/>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+        <link rel="icon" href="{{asset('images/favicon.png')}}" type="image/x-icon"/> 
+        <link rel="stylesheet" href="{{ asset('css/drropzone.min.css') }}" />
         @yield('styles')
     </head>
     <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -86,7 +86,7 @@
         <aside class="main-sidebar bg-gray-light elevation-4">
             <!-- Brand Logo -->
             <div>
-                <a href="/">
+                <a href="/dashboard">
                     <img class="armoirieimg mt-1" src="{{asset('images/logo.png')}}" alt="Logo">
                 </a>
                 <hr color="#708090">
@@ -356,9 +356,9 @@
         <script src="{{ asset('js/scriptAjax.js') }}"></script>
         <script src="{{ asset('js/sigobs.js') }}"></script>
         <script src="{{ asset('leaflet/leaflet.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+        <script src="{{ asset('js/cloudfare.js') }}"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="{{ asset('js/jdelivery.js') }}"></script>
 
         <script>
             $(window).load(function () {

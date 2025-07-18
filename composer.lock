@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "250a5217702d019ba5e2b3e437941bb2",
+    "content-hash": "4c1320e3b870d49caca9b4f168d80d72",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1496,16 +1496,16 @@
         },
         {
             "name": "kwn/number-to-words",
-            "version": "2.11.2",
+            "version": "2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kwn/number-to-words.git",
-                "reference": "c1fede59c3494c2c99b7d8d9ff7242cf89d36db7"
+                "reference": "c4e0cea84574bc0077121ac6a2331c183d6d1cc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kwn/number-to-words/zipball/c1fede59c3494c2c99b7d8d9ff7242cf89d36db7",
-                "reference": "c1fede59c3494c2c99b7d8d9ff7242cf89d36db7",
+                "url": "https://api.github.com/repos/kwn/number-to-words/zipball/c4e0cea84574bc0077121ac6a2331c183d6d1cc0",
+                "reference": "c4e0cea84574bc0077121ac6a2331c183d6d1cc0",
                 "shasum": ""
             },
             "require": {
@@ -1543,9 +1543,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kwn/number-to-words/issues",
-                "source": "https://github.com/kwn/number-to-words/tree/2.11.2"
+                "source": "https://github.com/kwn/number-to-words/tree/2.12.0"
             },
-            "time": "2025-01-07T18:42:09+00:00"
+            "time": "2025-07-01T20:49:04+00:00"
         },
         {
             "name": "laravel/fortify",

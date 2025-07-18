@@ -135,7 +135,7 @@ class EController extends Controller
                 'idclasse'         => $class,
                 'idcycle'          => $cycle->id,
                 'idniveau'         => $niveau->id,
-                'montantscolariteE'=> $inscriptionactuelle->montantscolariteE, // ou recalculer si besoin
+                'montantscolariteE'=> $niveau->Montantscolarite, // ou recalculer si besoin
                 'idpcharge'        => $inscriptionactuelle->idpcharge,
                 'iduser'           => session('user')->id ?? null,
             ];

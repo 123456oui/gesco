@@ -204,7 +204,7 @@ class EleveController extends Controller
         ->where('idanneescolaire', $annee)
         ->where('Matricule', $id)->first();
         $montantScolarite = null;
-        $montantsub = null;
+        $montantsub = null; 
         if ($totalInscriptions) {
             $niveau = DB::table('niveaux')
                 ->where('annee', $annee)

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 use function PHPUnit\Framework\isEmpty;
 
-class ApeController extends Controller
+class LclotureController extends Controller
 {
     private $msgerror='Impossible de supprimer cet élément car il est utilisé!';
     private $operation='Opération effectuée avec succès';

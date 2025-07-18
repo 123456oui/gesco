@@ -23,6 +23,8 @@ use App\Http\Controllers\Params\RetenueController;
 use App\Http\Controllers\Params\TypepersoController;
 use App\Http\Controllers\Reglement\ScolariteController;
 use App\Http\Controllers\Reglement\ApeController;
+use App\Http\Controllers\Reglement\LnoelController;
+use App\Http\Controllers\Reglement\LclotureController;
 use App\Http\Controllers\Reglement\CantanneController;
 use App\Http\Controllers\Reglement\IntendanceController;
 use App\Http\Controllers\Reglement\StateControler;
@@ -98,6 +100,20 @@ Route::get('ape/{rub}/{srub}',[ApeController::class,'index']);
 Route::post('/ape/imprimer', [ApeController::class, 'imprimer'])->name('ape.imprimer');
 Route::get('ape/create/{rub}/{srub}',[ApeController::class,'create']);
 Route::get('ape/edit/{rub}/{srub}', [ApeController::class, 'edit'])->name('ape.edit');
+
+Route::resource('lnoel',LnoelController::class);
+Route::post('lnoel',[LnoelController::class,'store'])->name('lnoel.store');
+Route::get('lnoel/{rub}/{srub}',[LnoelController::class,'index']);
+Route::post('/lnoel/imprimer', [LnoelController::class, 'imprimer'])->name('lnoel.imprimer');
+Route::get('lnoel/create/{rub}/{srub}',[LnoelController::class,'create']);
+Route::get('lnoel/edit/{rub}/{srub}', [LnoelController::class, 'edit'])->name('lnoel.edit');
+
+Route::resource('lcloture',LclotureController::class);
+Route::post('lcloture',[LclotureController::class,'store'])->name('lcloture.store');
+Route::get('lcloture/{rub}/{srub}',[LclotureController::class,'index']);
+Route::post('/lcloture/imprimer', [LclotureController::class, 'imprimer'])->name('lcloture.imprimer');
+Route::get('lcloture/create/{rub}/{srub}',[LclotureController::class,'create']);
+Route::get('lcloture/edit/{rub}/{srub}', [LclotureController::class, 'edit'])->name('lcloture.edit');
 
 Route::resource('cantanne',CantanneController::class);
 Route::post('cantanne',[CantanneController::class,'store'])->name('cantanne.store');
@@ -244,6 +260,8 @@ Route::get('Scolarite/create/{rub}/{srub}',[ScolariteController::class,'create']
 Route::get('Scolarite/{id}/edit/{rub}/{srub}',[ScolariteController::class,'edit'])->name('scolarite.edit');
 Route::get('Scolarite/{id}/noel/{rub}/{srub}',[ScolariteController::class,'noel'])->name('scolarite.noel');
 Route::get('Scolarite/{id}/cloture/{rub}/{srub}',[ScolariteController::class,'cloture'])->name('scolarite.cloture');
+Route::get('/scolarite/arecu/{matricule}/{type}', [ScolariteController::class, 'arecu'])->name('scolarite.arecu');
+
 
 Route::resource('intendance',IntendanceController::class);
 Route::get('intendance/{rub}/{srub}',[IntendanceController::class,'index']);
