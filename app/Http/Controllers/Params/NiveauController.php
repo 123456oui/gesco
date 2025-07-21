@@ -7,7 +7,9 @@ use App\Http\Requests\Params\NiveauformRequest;
 use App\Models\Niveau;
 use App\Models\Cycle;
 use App\Models\Classe;
+use Illuminate\Support\Facades\DB;
 class NiveauController extends Controller
+
 {
     private $msgerror='Impossible de supprimer cet élément car il est utilisé!';
     private $operation='Opération effectuée avec succès';
@@ -41,6 +43,7 @@ class NiveauController extends Controller
         $this->validate($request,[
             'niveau'=>['required','min:2'],
             'Montantscolarite'=>['required','numeric'],
+            'montantcantine'=>['required','numeric'],
         ]);
         //$valeurtest=Niveau::find($request->input('Annee'),$request->input('niveau'));
         $valeurtest=Niveau::where('annee', '=',session('annee'))->where('libelleniveau','=',$request->input('niveau'))->get();
@@ -52,10 +55,26 @@ class NiveauController extends Controller
         // dd( $valeurtest);
         $niveau = new Niveau();
         $niveau->annee=session('annee');
+	$annne=session('annee');
         $niveau->libelleniveau=$request->input('niveau');
         $niveau->Montantscolarite=$request->input('Montantscolarite');
+        $niveau->montantcantine=$request->input('montantcantine');
         $niveau->idcycle=$request->input('cycle');
+
         $niveau->save(); 
+	$newniveau =$niveau = DB::table('niveaux')->where('annee',$annne)->where('libelleniveau',$request->input('niveau'))->first();
+	if($newniveau){
+		DB::table('cantineparame')->insert([
+		'idniveau'=>$newniveau->id,
+		'annee' =>$annne,
+		'montant'=> $request->input('montantcantine'),
+	]);
+	}
+	else{
+	}
+
+	
+
         
         return redirect('niveau/'.$request->input('rub').'/'.$request->input('srub'))->with(['success'=>$this->operation]);
         }  
@@ -89,14 +108,29 @@ class NiveauController extends Controller
     public function update(Request $request, string $id)
     {
              
-        
+        $annne=session('annee');
        // $niveau->annee=session('annee');
         $niveau = Niveau::find($id);
         $niveau->libelleniveau=$request->input('niveau');
         $niveau->Montantscolarite=$request->input('Montantscolarite');
+        $niveau->montantcantine=$request->input('montantcantine');
         $niveau->idcycle=$request->input('cycle');
         $niveau->save();
-
+	$cantineparame=DB::table('cantineparame')->where('idniveau',$niveau->id)->where('annee',$annne)->first();
+	if($cantineparame){
+		DB::table('cantineparame')->update([
+			'idniveau'=>$niveau->id,
+			'annee' =>$annne,
+			'montant'=> $request->input('montantcantine'),
+		]);
+	}
+	else{
+		 DB::table('cantineparame')->insert([
+		'idniveau'=>$niveau->id,
+		'annee' =>$annne,
+		'montant'=> $request->input('montantcantine'),
+]);
+}
         return redirect('niveau/'.$request->input('rub').'/'.$request->input('srub'))->with(['success'=>$this->operation]);
     
     }

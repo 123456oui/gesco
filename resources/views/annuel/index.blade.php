@@ -15,7 +15,7 @@
                         <i class="fas fa-university fa-3x trembe text-success mx-3"></i>
                     </div>
                     <div class="d-flex flex-column align-items-start">
-                        <h5 class="mb-1 fw-bold text-primary" style="font-size: 22px;">Scolarité : <span class="mx-3"> <span class="mx-2 text-danger">{{ number_format($letotaldesversement, 0, ',', ' ') }} FCFA </span></span></h5>
+                        <h5 class="mb-1 fw-bold text-primary" style="font-size: 22px;">Scolarité : <span class="mx-3"> <span class="mx-2 text-danger">{{ number_format($letotaldesversement-$ape, 0, ',', ' ') }} FCFA </span></span></h5>
                         <h5 class="mb-1 fw-bold text-primary" style="font-size: 22px;">APE : <span class="mx-3"> <span class="mx-2 text-danger">{{ number_format($ape, 0, ',', ' ') }} FCFA </span></span></h5>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                             <h5 class="mb-0 fw-bold text-primary" style="font-size: 22px;">Cantine :</h5>
                         </div>
                         <h5 class="mb-0 fw-bold text-danger" style="font-size: 22px;">
-                            {{ number_format($cantinetotal * session('cantinesome'), 0, ',', ' ') }} FCFA
+                            {{ number_format($cantinetotalmontant , 0, ',', ' ') }} FCFA
                         </h5>
                     </div>
                     <!-- Valeur principale -->
@@ -112,7 +112,7 @@
                                     <div class="col-12 col-md-4 mb-2">
                                         <i class="fas fa-coins tremb text-warning"></i>
                                         <div>Total cantine</div>
-                                        <div class="fw-bold">{{ number_format($classe->totalcantine * session('cantinesome'), 0, ',', ' ') }} FCFA</div>
+                                        <div class="fw-bold">{{ number_format($classe->cantinemontantclasse , 0, ',', ' ') }} FCFA</div>
                                     </div>
                                 </div>
                             </div>
@@ -120,7 +120,7 @@
                     </div>
                     <!-- Pied de card : infos complémentaires -->
                     <div class="text-end mt-2 w-100">
-                        <small style="color:#27ae60;"> Total encaissé :<span class="ml-2">  {{ number_format($cantinetotal * session('cantinesome'), 0, ',', ' ') }} FCFA </span></small>
+                        <small style="color:#27ae60;"> Total encaissé :<span class="ml-2">  {{ number_format($cantinetotalmontant, 0, ',', ' ') }} FCFA </span></small>
                     </div>
                 </div>
             </div>

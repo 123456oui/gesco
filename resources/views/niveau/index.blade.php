@@ -14,6 +14,7 @@
                     <th>{{__('Année')}} </th>
                     <th>{{__('Niveau')}} </th>
                     <th>{{__('Montant Scolarité')}} </th>
+                    <th>{{__('Montant Cantine')}} </th>
 
                     @php echo $controler->crudheader($rub,$srub); @endphp
                 </tr>
@@ -25,6 +26,7 @@
                         <td>{{$item->libelleniveau}}</td>
                          
                         <td>{{$item->Montantscolarite}}</td>
+                        <td>{{$item->montantcantine}}</td>
                         @php $route = 'route'; echo $controler->crudbody($rub,$srub,$route,'niveau.edit','niveau.destroy',$item->id); @endphp
                     </tr>
                 @endforeach

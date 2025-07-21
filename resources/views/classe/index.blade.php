@@ -13,6 +13,7 @@
                 <tr>
                     <th>{{__('Classe')}} </th>
                     <th>{{__(key: 'Année')}} </th>
+		    <th>{{__(key: 'Max')}} </th>
                     @php echo $controler->crudheader($rub,$srub); @endphp
                 </tr>
             </thead>
@@ -20,7 +21,8 @@
                 @foreach($classesp as $item)
                     <tr>
                         <td>{{$item->libelleclasse}}</td>
-                        <td>{{$item->Annee}}</td>  
+                        <td>{{$item->Annee}}</td> 
+			<td>{{$item->max}}</td>  
                         @php $route = 'route'; echo $controler->crudbody($rub,$srub,$route,'classe.edit','classe.destroy',$item->id); @endphp
                     </tr>
                 @endforeach

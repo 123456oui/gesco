@@ -7,9 +7,9 @@
             <div class="card">
                 <div class="card-header py-0">{{ __('Modifier Classe') }}</div>
                     <div class="card-body">
-                        <form class="needs-validation" novalidate method="POST" action="{{ route('classe.store') }}">
+                        <form class="needs-validation" novalidate method="POST" action="{{ route('classe.update',$classe->id)}}">
                             @csrf
-
+				 @method('PUT')
                             <div class="form-group row">
                                      <label for="niveau" class="col-md-4 col-form-label text-md-right">{{ __('Niveau') }}<span style="color: red">*</span></label>
                                      <div class="col-md-6">

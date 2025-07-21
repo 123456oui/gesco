@@ -57,11 +57,12 @@ class AnnuelController extends Controller
             $classe->nonajours = 0;
             $classe->tatalinscription = 0;
             $classe->totalverserr = 0;
+            $classe->cantinemontantclasse =0;
             $classe->nombredinscription = $inscriptions->count(); 
             foreach ($inscriptions as $inscription) {
                 // Calcule le total des versements pour cette inscription
                 $inscription->total_versement = DB::table('reglements')
-                    ->where('id_eleve', $inscription->Matricule)
+                    ->where('id_eleve', $inscription->Matricule)->where('annee', $annee)
                     ->sum('montant');
 
                 // Comparaison et incrémentation
@@ -103,7 +104,8 @@ class AnnuelController extends Controller
 
                 // Ajoute le nombre de cantines pour cette inscription au total de la classe
                 $classe->totalcantine += $cantineEleve->count();
-
+                $montant= DB::table('cantineparame')->where('annee', $annee)->where('idniveau', $inscription->idniveau)->first()->montant;
+                $classe->cantinemontantclasse += $montant * $cantineEleve->count();
                 // Compte l'inscription si elle a au moins une cantine
                 if ($cantineEleve->count() > 0) {
                     $classe->nombredinscriptionavecantine++;
@@ -118,8 +120,10 @@ class AnnuelController extends Controller
             $cantinesByClasse[] = $classe;
         }
         $cantinetotal=0;
+        $montantcantinetotal =0;
         foreach ($cantinesByClasse as $classe) {
             $cantinetotal += $classe->totalcantine;
+            $montantcantinetotal += $classe->cantinemontantclasse;
         }
         $total_noel = 0;
         $total_cloture = 0;
@@ -128,8 +132,10 @@ class AnnuelController extends Controller
             $total_noel += $classe->noel_total;
             $total_cloture += $classe->cloture_total;
         }
+
         return view('annuel.index')->with([
             'cantinetotal' => $cantinetotal,
+            'cantinetotalmontant' => $montantcantinetotal,
             "classesWithInscriptions" => $classesWithInscriptions,
             "cantinesByClasse" => $cantinesByClasse,
             "letotaldesinscription" => $letotaldesinscription,

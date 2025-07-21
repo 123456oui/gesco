@@ -14,7 +14,7 @@
         <input type="hidden" name="eleves_json" value='@json($cantines)'>
         <input type="hidden" name="rub" value="{{ $rub}}">
         <input type="hidden" name="srub" value="{{ $srub}}">
-        <input type="hidden" name="total" value="{{ number_format($total, 0, ',', ' ') }}">
+        <input type="hidden" name="total" value="{{ number_format($somme, 0, ',', ' ') }}">
         <button type="submit" class="btn btn-sm btn-primary">
             <i class="fa fa-print"></i> Imprimer
         </button>
@@ -42,7 +42,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <p class="text-muted text-right mx-5">Total cantines : {{ number_format($total, 0, ',', ' ') }} F</p>
+            <p class="text-muted text-right mx-5">Total cantines : {{ number_format($somme, 0, ',', ' ') }} F</p>
         </div>
     </div>
 </div>

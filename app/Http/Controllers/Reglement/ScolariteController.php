@@ -331,45 +331,54 @@ class ScolariteController extends Controller
         //
     }
     public function getEleve($matricule)
-{
-    $annee = session('annee');
-
-    // Récupération de l'élève
-    $eleve = DB::table('eleves')->where('Matricule', $matricule)->first();
-
-    if (!$eleve) {
-        return response()->json(['error' => 'Élève non trouvé'], 404);
+    {
+        $annee = session('annee');
+    
+        // Récupération de l'élève
+        $eleve = DB::table('eleves')->where('Matricule', $matricule)->first();
+        if (!$eleve) {
+            return response()->json(['error' => 'Élève non trouvé'], 404);
+        }
+    
+        // Récupération de l'inscription
+        $inscription = DB::table('inscriptions')
+            ->where('Matricule', $matricule)
+            ->where('idanneescolaire', $annee)
+            ->first();
+    
+        if (!$inscription) {
+            return response()->json(['error' => 'Inscription non trouvée'], 404);
+        }
+    
+        // Récupération du montant cantine (optionnel)
+        $cantineParam = DB::table('cantineparame')
+            ->where('annee', $annee)
+            ->where('idniveau', $inscription->idniveau)
+            ->first();
+    
+        $montant = $cantineParam ? $cantineParam->montant : 0;
+        session(['montant' => $montant]);
+    
+        // Récupération des paiements
+        $reglements = DB::table('reglements')
+            ->where('id_eleve', $matricule)
+            ->where('annee', $annee)
+            ->get();
+    
+        $total_regle = $reglements->sum('montant');
+        $montant_scolarite = $inscription->montantscolariteE ?? 0;
+        $reste = $montant_scolarite - $total_regle;
+    
+        return response()->json([
+            'eleve' => $eleve,
+            'inscription' => $inscription,
+            'reglements' => $reglements,
+            'total_regle' => $total_regle,
+            'reste' => $reste,
+            'montant'=> $montant,
+        ]);
     }
-
-    // Récupération de l'inscription de l'année en cours
-    $inscription = DB::table('inscriptions')
-        ->where('Matricule', $matricule)
-        ->where('idanneescolaire', $annee)
-        ->first();
-
-    // Récupération des règlements de l'année en cours
-    $reglements = DB::table('reglements')
-        ->where('id_eleve', $matricule)
-        ->where('annee', $annee)
-        ->get();
-
-    // Calcul du total payé
-    $total_regle = $reglements->sum('montant');
-
-    // Récupération du montant à payer (scolarité)
-    $montant_scolarite = $inscription ? $inscription->montantscolariteE : 0;
-
-    // Calcul du reste à payer
-    $reste = $montant_scolarite - $total_regle;
-
-    return response()->json([
-        'eleve' => $eleve,
-        'inscription' => $inscription,
-        'reglements' => $reglements,
-        'total_regle' => $total_regle,
-        'reste' => $reste,
-    ]);
-}
+    
 
 public function recu (Request $request,$id)
 {

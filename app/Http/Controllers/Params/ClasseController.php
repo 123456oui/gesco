@@ -86,7 +86,14 @@ class ClasseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $classe = Classe::find($id);
+        $classe->libelleclasse=$request->input('classe');
+        $classe->idniveau=$request->input('niveau');
+	$classe->max=$request->input('max');
+        $classe->save();
+
+        return redirect('classe/'.$request->input('rub').'/'.$request->input('srub'))->with(['success'=>$this->operation]);
+
     }
 
     /**

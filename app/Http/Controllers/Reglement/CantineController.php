@@ -43,6 +43,10 @@ class CantineController extends Controller
         ]);
         $annee = session('annee'); // ou $request->annee si tu l'envoies depuis le formulaire
         $matricule = $request->matricule;
+        $inscription= DB::table('inscriptions')->where('Matricule', $matricule)
+        ->where('idanneescolaire', $annee)->first();
+        $montant= DB::table('cantineparame')->where('annee', $annee)->where('idniveau', $inscription->idniveau)->first()->montant;
+        
         $moisEnregistres = [];
         $mesmois =[];
         foreach ($request->moiscant as $mois_id) {
@@ -59,13 +63,26 @@ class CantineController extends Controller
         }
 
         if (count($moisEnregistres) > 0) {
+            $total = 0;
+
             foreach ($moisEnregistres as $mois_id) {
-               $mois = DB::table('mois')->where('id', $mois_id)->first();
+                // Récupération du nom du mois
+                $mois = DB::table('mois')->where('id', $mois_id)->first();
                 $mesmois[] = $mois->nom_mois;
+            
+                // Vérifie s'il y a une réduction pour ce mois
+                $reduction = DB::table('cantinereducte')
+                    ->where('mois_id', $mois_id)
+                    ->where('annee', $annee)
+                    ->where('idniveau', $inscription->idniveau)
+                    ->first();
+            
+                // Si réduction existe, on l’utilise, sinon montant par défaut
+                $total += $reduction ? $reduction->montant : $montant;
             }
             $srub = $request->input('srub');
             $rub = $request->input('rub');
-            return redirect()->back()->with(['success' => 'Veillez joindre une piece comptable ','mesmois' => $mesmois,  'rub' =>$rub, 'srub' =>$srub ,'matricule' => $matricule])
+            return redirect()->back()->with(['success' => 'Veillez joindre une piece comptable ','mesmois' => $mesmois,  'rub' =>$rub, 'srub' =>$srub ,'matricule' => $matricule,'total'=>$total])
                 ->withInput();
         } else {
             return back()->with('error', 'Aucun enregistrement effectué. Ces mois existent déjà.');
@@ -124,12 +141,14 @@ class CantineController extends Controller
     ->where('inscriptions.idanneescolaire', $annee)
     ->select(
         'inscriptions.*',
-        'eleves.*',
-        'classes.*',
-        'niveaux.*',
-        'cycles.*'
+        'eleves.Nom as Nom',
+        'eleves.Prenom as Prenom',
+        'eleves.datenais',
+        'classes.libelleclasse as libelleclasse',
+        'niveaux.libelleniveau as libelleniveau',
+        'cycles.libellecycle as libellecycle'
     )
-    ->first();
+    ->first();    
     // Parcourir chaque mois et insérer une cantine si elle n'existe pas déjà
     foreach ($moisIds as $moisId) {
         $existe = DB::table('cantines')
@@ -139,6 +158,7 @@ class CantineController extends Controller
             ->exists();
 
         if (!$existe) {
+
             DB::table('cantines')->insert([
                 'Matricule' => $matricule,
                 'mois_id' => $moisId,
@@ -148,9 +168,25 @@ class CantineController extends Controller
             ]);
         }
     }
-    $cantinesome= DB::table('cantineannes')->where('annee', $annee)->first();
-    $montant= $cantinesome->montant_mois;
-    $total = $montant * count($moisIds);
+
+    $cantinesome= DB::table('cantineparame')->where('annee', $annee)->where('idniveau', $inscription->idniveau)->first();
+    $total = 0;
+
+    foreach ($moisIds as $moisId) {
+        // Vérifier s'il y a une réduction pour ce mois
+        $reduction = DB::table('cantinereducte')
+            ->where('mois_id', $moisId)
+            ->where('annee', $annee)
+            ->where('idniveau', $inscription->idniveau)
+            ->first();
+
+        if ($reduction) {
+            $total += $reduction->montant; // utiliser le montant réduit
+        } else {
+            $total += $cantinesome->montant; // sinon, utiliser le montant standard
+        }
+    }
+
     $lettres=$this->afficher( $total);
     // Maintenant on récupère les cantines pour affichage
     $cantines = DB::table('cantines')

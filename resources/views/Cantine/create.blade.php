@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let matricule=@json(session('matricule'));
     let rub = @json(session('rub'));
     let srub = @json(session('srub'));
-    let montant = @json(session('cantinesome'));
+    let montant = @json(session('montant'));
      let total= mesmos.length * montant;
     const moisEncoded = encodeURIComponent(JSON.stringify(mesmos));
     @if(session('mesmois'))
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
 @push('scripts')
 <script>
 const allInscriptions = @json($inscriptions);
-
+let montant;
 function previewLogo(event) {
     const reader = new FileReader();
     reader.onload = function(){
@@ -209,6 +209,7 @@ function onMatriculeChange(matricule) {
             } else {
                 document.getElementById('matriculeE').value = data.eleve.Nom || '';
                 document.getElementById('prenomE').value = data.eleve.Prenom || '';
+                montant = data.montant;
             }
         })
         .catch(error => {
@@ -225,8 +226,8 @@ function onMatriculeChange(matricule) {
             document.getElementById('versement').value = '';
             return;
         }
-        const somme = "{{ session('cantinesome') }}";
-        document.getElementById('versement').value = selected.length * somme + 'FCFA';
+
+        document.getElementById('versement').value = selected.length * montant + 'FCFA';
     }
 </script>
 

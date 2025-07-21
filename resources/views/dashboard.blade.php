@@ -11,20 +11,20 @@
   <div class="container">
     <!-- Marquee -->
     <div class="position-relative mb-5">
-      <marquee behavior="scroll" direction="left" scrollamount="6"
+      <marquee behavior="scroll" direction="left" scrollamount="10"
                class="text-white text-lg font-bold py-2 px-4 rounded shadow-lg text-center"
-               style="background-color:rgba(236, 67, 143, 0.8); width: 100%;">
+               style="background-color:rgba(236, 67, 143, 0.8); width: 100%; font-size:48px !important;">
         Elite Plus : Groupe scolaire Maternel, Primaire, Secondaire
       </marquee>
     </div>
 
     <!-- Cards -->
-    <div class="row justify-content-center text-center">
+    <div class="row justify-content-center  w-100 h-80" style="width:100%;">
     <!-- Total Élèves -->
-    <div class="col-md-4 mb-3">
-        <div class="card shadow border-0 py-2">
+    <div class="col-md-5 mb-3">
+        <div class="card shadow border-0 py-4">
             <div class="card-body d-flex flex-column align-items-center p-2">
-                <div class="text-primary mb-2">
+                <div class="text-primary mb-4">
                     <i class="fas fa-user-graduate fa-4x"></i>
                 </div>
                 <h1 class="fw-bold text-dark mb-1">{{ $eleves ?? 0 }}</h1>
@@ -34,10 +34,10 @@
     </div>
 
     <!-- Inscrits cette année -->
-    <div class="col-md-4 mb-3">
-        <div class="card shadow border-0 py-2">
+    <div class="col-md-5 mb-3">
+        <div class="card shadow border-0 py-4">
             <div class="card-body d-flex flex-column align-items-center p-2">
-                <div class="text-success mb-2">
+                <div class="text-success mb-4">
                     <i class="fas fa-user-check fa-4x"></i>
                 </div>
                 <h1 class="fw-bold text-dark mb-1">{{ $inscription ?? 0 }} </h1>
@@ -47,10 +47,10 @@
     </div>
 
     <!-- Nombre de classes -->
-    <div class="col-md-4 mb-3">
-        <div class="card shadow border-0 py-2">
+    <div class="col-md-5 mb-3">
+        <div class="card shadow border-0 py-4">
             <div class="card-body d-flex flex-column align-items-center p-2">
-                <div class="text-warning mb-2">
+                <div class="text-warning mb-4">
                     <i class="fas fa-chalkboard-teacher fa-4x"></i>
                 </div>
                 <h1 class="fw-bold text-dark mb-1">{{ $classes ?? 0 }}</h1>
@@ -58,7 +58,7 @@
             </div>
         </div>
     </div>
-     
+    </div>
 </div>
 
   </div>

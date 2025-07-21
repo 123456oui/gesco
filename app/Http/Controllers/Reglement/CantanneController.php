@@ -91,7 +91,7 @@ class CantanneController extends Controller
      */
     public function edit($rub, $srub, Request $request)
 {
-    $somme = session('cantinesome');
+    $somme = 0;
     $anne= session('annee');
     $moisDebutId = $request->input('moisdebut');
     $moisFinId = $request->input('moisfin');
@@ -113,23 +113,28 @@ class CantanneController extends Controller
         ->groupBy('cantines.matricule', 'eleves.nom', 'eleves.prenom')
         ->get();
 
-// Total général
-        $total = $cantines->sum(function ($cantine) use ($somme) {
-            return $cantine->nombre_fois * $somme;
-        });
+        
 
+
+// Total général
+        
         // Ajouter le montant pour chaque élève
         foreach ($cantines as $cantine) {
-            $cantine->montant = $cantine->nombre_fois * $somme;
+            $inscription= DB::table('inscriptions')->where('Matricule', $cantine->matricule)
+            ->where('idanneescolaire', $anne)->first();
+            $montant=DB::table('cantineparame')->where('annee', $anne)->where('idniveau', $inscription->idniveau)->first()->montant;
+            
+            $cantine->montant = $cantine->nombre_fois * $montant;
+            $somme+=$cantine->montant;
         }
-        
+
         return view('cantanne.edit')->with([
             'cantines' => $cantines,
             'rub' => $rub,
             'srub' => $srub,
             'moisDebutNom' => $moisDebutNom,
             'moisFinNom' => $moisFinNom,
-            'total' => $total
+            'somme' => $somme
         ]);
     }
 
